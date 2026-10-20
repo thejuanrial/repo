@@ -118,15 +118,7 @@ class SiteConfiguration(models.Model):
     def __str__(self):
         return self.site_name
     
-    def save(self, *args, **kwargs):
-        # Singleton pattern - always use pk=1
-        self.pk = 1
-        super().save(*args, **kwargs)
-    
-    @classmethod
-    def get_config(cls):
-        config, _ = cls.objects.get_or_create(pk=1)
-        # Sanitizar automáticamente cualquier remanente de subastas en la base de datos
+    def sanitize(self):
         replacements = [
             ("Subastas Recientes", "Productos Destacados"),
             ("subastas recientes", "productos destacados"),
@@ -178,16 +170,27 @@ class SiteConfiguration(models.Model):
         ]
         dirty = False
         for f in text_fields:
-            val = getattr(config, f, None)
+            val = getattr(self, f, None)
             if isinstance(val, str) and val:
                 new_val = val
                 for old, new in replacements:
                     if old in new_val:
                         new_val = new_val.replace(old, new)
                 if new_val != val:
-                    setattr(config, f, new_val)
+                    setattr(self, f, new_val)
                     dirty = True
-        if dirty:
+        return dirty
+
+    def save(self, *args, **kwargs):
+        # Singleton pattern - always use pk=1
+        self.pk = 1
+        self.sanitize()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_config(cls):
+        config, _ = cls.objects.get_or_create(pk=1)
+        if config.sanitize():
             config.save()
         return config
 

@@ -1,0 +1,61 @@
+{% extends "auctions/layout.html" %}
+{% load custom_filters %}
+
+{% block body %}
+
+<section class="bg-gray-100 dark:bg-gray-900 min-h-[100vh] flex flex-col gap-6 items-center justify-start pt-[12vh] pb-12 px-4">
+    <h2 class="text-gray-100 text-3xl sm:text-5xl font-bold">Lista de Seguimiento</h2>
+    
+    {% if listings %}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+        {% for listing in listings %}
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md">
+                <a class="block group" href="{% url 'listing' listing.id %}">
+                    <div class="image-row overflow-hidden bg-gray-100 dark:bg-gray-900">
+                        {% if listing.image %}
+                            <img src="/media/{{ listing.image }}" alt="{{ listing.title }}" class="listing-image object-cover w-full h-44 group-hover:scale-105 transition-transform">
+                        {% else %}
+                            <div class="w-full h-44 flex items-center justify-center text-gray-400 text-sm">Sin imagen</div>
+                        {% endif %}
+                    </div>
+                    <div class="p-5 flex flex-col gap-2">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-500 line-clamp-1">{{ listing.title }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Categoría: {{ listing.category }}</p>
+                        
+                        <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                            <span class="text-xs text-gray-400 block">Puja Actual</span>
+                            <span class="text-base font-extrabold text-gray-900 dark:text-white">${{ listing.starting_value|format_usd }} USD</span>
+                            {% if site_config.show_currency_conversion %}
+                            <div class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                                <span class="text-emerald-500 font-semibold">Bs. {{ listing.starting_value|to_bs }}</span> | &euro; {{ listing.starting_value|to_eur }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            Estado: {% if listing.auction_active %} <span class="text-green-500 font-semibold">Activa</span> {% else %}<span class="text-red-500 font-semibold">Finalizada</span>{% endif %}
+                        </p>
+
+                        <form action="{% url 'watch' listing.id %}" method="post" class="mt-3">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-4 rounded-lg text-xs shadow-sm">
+                                Dejar de seguir
+                            </button>
+                        </form>
+                    </div>
+                </a>
+            </div>
+
+        {% endfor %}
+    </section>
+    {% else %}
+    <div class="flex flex-col items-center justify-center my-16 text-center">
+        <h3 class="text-gray-300 text-2xl font-medium">No tiene artículos en su lista de seguimiento.</h3>
+        <a href="{% url 'index' %}" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">Explorar Subastas</a>
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}

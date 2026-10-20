@@ -1,0 +1,77 @@
+{% extends "auctions/admin/admin_layout.html" %}
+{% block body %}
+
+<div class="space-y-6 max-w-3xl mx-auto">
+    <!-- Encabezado de Página -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Editar Subasta</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Modificando la publicación: <span class="font-semibold text-neutral-800 dark:text-neutral-200">{{ listing.title }}</span></p>
+        </div>
+        <a href="{% url 'manage_listings' %}" class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition">
+            &larr; Volver a Subastas
+        </a>
+    </div>
+
+    <!-- Tarjeta del Formulario -->
+    <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-6 md:p-8 shadow-xs">
+        <form method="post" enctype="multipart/form-data" class="space-y-5">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título de la Subasta *</label>
+                <input type="text" name="title" value="{{ listing.title }}" required class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Categoría</label>
+                    <select name="category" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        {% for cat in categories %}
+                            <option value="{{ cat.name }}" {% if listing.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Valor Inicial ({{ site_config.currency_symbol }})</label>
+                    <input type="number" name="starting_value" value="{{ listing.starting_value }}" step="0.01" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Descripción</label>
+                <textarea name="description" rows="4" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">{{ listing.description }}</textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Imagen de la Subasta</label>
+                {% if listing.image %}
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="/media/{{ listing.image }}" alt="{{ listing.title }}" class="h-20 w-28 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700">
+                        <span class="text-xs text-neutral-400">Imagen actual</span>
+                    </div>
+                {% endif %}
+                <input type="file" name="image" accept="image/*" class="w-full px-3 py-2 rounded-xl text-xs bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neutral-900 file:text-white dark:file:bg-white dark:file:text-neutral-900 hover:file:opacity-90">
+            </div>
+
+            <div class="pt-2">
+                <label class="inline-flex items-center gap-2 cursor-pointer text-xs sm:text-sm text-neutral-800 dark:text-neutral-200">
+                    <input type="checkbox" name="auction_active" {% if listing.auction_active %}checked{% endif %} class="rounded text-blue-600 focus:ring-blue-500">
+                    <span>Subasta Activa y Visible en Catálogo</span>
+                </label>
+            </div>
+
+            <!-- Botones Responsivos -->
+            <div class="pt-5 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-3">
+                <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm">
+                    Guardar Cambios
+                </button>
+                <a href="{% url 'manage_listings' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

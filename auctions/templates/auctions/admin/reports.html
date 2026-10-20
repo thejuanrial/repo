@@ -1,0 +1,465 @@
+{% extends "auctions/admin/admin_layout.html" %}
+{% load static %}
+{% block body %}
+
+<!-- Main Content Area -->
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Encabezado de Página -->
+    <div class="pb-2 border-b border-neutral-200 dark:border-neutral-800">
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Reportes y Métricas</h1>
+        <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Estadísticas de usuarios, publicaciones y actividad en la plataforma</p>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-xs">
+
+            <!-- User-wise Listings Table -->
+            <div class="my-4">
+                <div class="my-4">
+                    <h2 class="text-center text-3xl font-bold mb-2">Usuarios</h2>
+                </div>
+
+                <div class="my-4 border border-gray-300 rounded-md p-3">
+                    <h2 class="text-lg text-center font-semibold py-2 mb-2">Publicaciones por Usuario</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table-auto w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Usuario</th>
+                                    <th class="px-4 py-2 text-center">Total de Publicaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in user_wise_listings %}
+                                <tr class="border-b">
+                                    <td class="px-4 py-2">{{ user.username }}</td>
+                                    <td class="px-4 py-2 text-center font-semibold">{{ user.total_listings }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="px-4 py-2 text-center text-gray-500">Sin datos registrados</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="my-4 border border-gray-300 rounded-md p-3">
+
+                <!-- User Registration Reports Table  -->
+                <div class="my-4">
+                    <h2 class="text-lg text-center font-semibold mb-2">Registros de Usuarios (Últimos 7 Días)</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table-auto w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Fecha</th>
+                                    <th class="px-4 py-2 text-center">Total de Registros</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in user_registration_data %}
+                                <tr class="border-b">
+                                    <td class="px-4 py-2">{{ data.date_joined__date }}</td>
+                                    <td class="px-4 py-2 text-center font-semibold">{{ data.total_registrations }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="px-4 py-2 text-center text-gray-500">Sin registros en este período</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- User Registration Reports Chart -->
+                <div class="my-4">
+                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Registros (Últimos 7 Días)</h2>
+                    <canvas id="user-registration-chart" width="400" height="200"></canvas>
+                </div>
+
+            </div>
+
+            <div class="my-4 border border-gray-300 rounded-md p-3">
+
+                <div class="my-4">
+                    <h2 class="text-lg text-center font-semibold mb-2">Registros de Usuarios (Últimos 3 Meses)</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table-auto w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Mes</th>
+                                    <th class="px-4 py-2 text-center">Total de Registros</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in user_registration_data_3_months %}
+                                <tr class="border-b">
+                                    <td class="px-4 py-2">Mes {{ data.date_joined__month }}</td>
+                                    <td class="px-4 py-2 text-center font-semibold">{{ data.total_registrations }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="px-4 py-2 text-center text-gray-500">Sin registros en este período</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="my-4">
+                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Registros (Últimos 3 Meses)</h2>
+                    <canvas id="user-registration-chart-3-months" width="400" height="200"></canvas>
+                </div>
+
+            </div>
+
+            <script>
+                // User Registration Reports Chart
+                var userRegistrationCanvas = document.getElementById('user-registration-chart').getContext('2d');
+                var userRegistrationChart = new Chart(userRegistrationCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            {% for data in user_registration_data %}
+                                "{{ data.date_joined__date }}",
+                            {% endfor %}
+                        ],
+                        datasets: [{
+                            label: 'Total de Registros',
+                            data: [
+                                {% for data in user_registration_data %}
+                                    {{ data.total_registrations }},
+                                {% endfor %}
+                            ],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                // User Registration Reports Chart (Last 3 Months)
+                var userRegistrationCanvas3Months = document.getElementById('user-registration-chart-3-months').getContext('2d');
+                var userRegistrationChart3Months = new Chart(userRegistrationCanvas3Months, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            {% for data in user_registration_data_3_months %}
+                                "Mes {{ data.date_joined__month }}",
+                            {% endfor %}
+                        ],
+                        datasets: [{
+                            label: 'Total de Registros',
+                            data: [
+                                {% for data in user_registration_data_3_months %}
+                                    {{ data.total_registrations }},
+                                {% endfor %}
+                            ],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            </script>
+
+        </div>
+
+        
+        <div class="bg-white border rounded-lg p-4 shadow-lg">
+
+            <div class="my-4">
+                <h1 class="text-center text-3xl font-bold">Subastas</h1>
+            </div>
+        
+            <div class="my-4">
+
+                <div class="my-4 border border-gray-300 rounded-md p-3">
+                    <!-- Day-wise Listings Table -->
+                    <div class="my-4">
+                        <h2 class="text-lg text-center font-semibold mb-2">Subastas Creadas por Día</h2>
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left">Fecha</th>
+                                        <th class="px-4 py-2 text-center">Total de Subastas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for day in day_wise_listings %}
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2">{{ day.created_at__date|date }}</td>
+                                        <td class="px-4 py-2 text-center font-semibold">{{ day.count }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="px-4 py-2 text-center text-gray-500">Sin datos registrados</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Day-wise Listings Chart -->
+                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Subastas por Día</h2>
+                    <canvas id="day-wise-chart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="my-4 border border-gray-300 rounded-md p-3">
+                    <!-- Month-wise Listings Table -->
+                    <div class="my-4">
+                        <h2 class="text-lg text-center font-semibold mb-2">Subastas Creadas por Mes</h2>
+                        <div class="overflow-x-auto">
+                            <table class="table-auto w-full text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left">Mes</th>
+                                        <th class="px-4 py-2 text-center">Total de Subastas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in month_wise_listings %}
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2">Mes {{ i.created_at__month }}</td>
+                                        <td class="px-4 py-2 text-center font-semibold">{{ i.count }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="px-4 py-2 text-center text-gray-500">Sin datos registrados</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Month-wise Listings Chart -->
+                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Subastas por Mes</h2>
+                    <canvas id="month-wise-chart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <script>
+                // Day-wise Listings Chart
+                var dayWiseCanvas = document.getElementById('day-wise-chart').getContext('2d');
+                var dayWiseChart = new Chart(dayWiseCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            {% for day in day_wise_listings %}
+                                "{{ day.created_at__date|date:'D' }}",
+                            {% endfor %}
+                        ],
+                        datasets: [{
+                            label: 'Total de Subastas',
+                            data: [
+                                {% for day in day_wise_listings %}
+                                    {{ day.count }},
+                                {% endfor %}
+                            ],
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                // Month-wise Listings Chart
+                var monthWiseCanvas = document.getElementById('month-wise-chart').getContext('2d');
+                var monthWiseChart = new Chart(monthWiseCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            {% for i in month_wise_listings %}
+                                "Mes {{ i.created_at__month }}",
+                            {% endfor %}
+                        ],
+                        datasets: [{
+                            label: 'Total de Subastas',
+                            data: [
+                                {% for month in month_wise_listings %}
+                                    {{ month.count }},
+                                {% endfor %}
+                            ],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            </script>
+
+        </div>
+
+        <!--  Category Wise Reports  -->
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-xs">
+            <!-- Category Reports Table -->
+            <div class="my-4">
+                <h2 class="text-3xl text-center font-bold mb-2">Subastas por Categoría</h2>
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left">Categoría</th>
+                                <th class="px-4 py-2 text-center">Total de Subastas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in category_data %}
+                            <tr class="border-b">
+                                <td class="px-4 py-2">{{ data.category }}</td>
+                                <td class="px-4 py-2 text-center font-semibold">{{ data.total_listings }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="px-4 py-2 text-center text-gray-500">Sin categorías registradas</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bar Graph for Items in Each Category -->
+            <div class="my-4">
+                <canvas id="categoryBarChart" width="400" height="200"></canvas>
+            </div>
+
+            <script>
+                var ctx = document.getElementById('categoryBarChart').getContext('2d');
+                var categoryBarChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            {% for data in category_data %}
+                                "{{ data.category }}",
+                            {% endfor %}
+                        ],
+                        datasets: [{
+                            label: 'Total de Subastas',
+                            data: [
+                                {% for data in category_data %}
+                                    {{ data.total_listings }},
+                                {% endfor %}
+                            ],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            </script>
+
+        </div>
+
+        <div class="bg-white border rounded-lg p-4 shadow-lg">
+
+            <div class="my-4">
+                <h1 class="text-center text-3xl font-bold">Pujas</h1>
+            </div>
+
+            <div class="my-4 space-y-4">
+
+                <div>
+                    <h2 class="text-lg font-semibold mb-2">Artículo con Mayor Cantidad de Pujas</h2>
+                    <div class="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                        {% if most_bid_item %}
+                            <h3 class="text-lg font-semibold">{{ most_bid_item.title }}</h3>
+                            <p class="text-gray-600">Total de Pujas: <span class="font-bold text-blue-600">{{ most_bid_item.num_bids }}</span></p>
+                            <p class="text-gray-600">Categoría: {{ most_bid_item.category }}</p>
+                        {% else %}
+                            <p class="text-gray-500">No hay pujas registradas aún.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-semibold mb-2">Artículo con Menor Cantidad de Pujas</h2>
+                    <div class="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                        {% if least_bid_item %}
+                            <h3 class="text-lg font-semibold">{{ least_bid_item.title }}</h3>
+                            <p class="text-gray-600">Total de Pujas: <span class="font-bold text-gray-700">{{ least_bid_item.num_bids }}</span></p>
+                            <p class="text-gray-600">Categoría: {{ least_bid_item.category }}</p>
+                        {% else %}
+                            <p class="text-gray-500">No hay pujas registradas aún.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-semibold mb-2">Mayores Pujadores</h2>
+                    <div class="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                        <ul class="divide-y divide-gray-200">
+                            {% for bidder in top_bidders %}
+                                <li class="py-2 flex justify-between">
+                                    <strong>{{ bidder.username }}</strong>
+                                    <span class="text-gray-600">{{ bidder.num_bids }} pujas</span>
+                                </li>
+                            {% empty %}
+                                <li class="py-2 text-gray-500">No hay pujadores registrados aún.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

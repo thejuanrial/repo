@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="m-auto text-center px-4">
+        <h1 class="text-4xl font-bold text-red-500 mb-2">403 - Acceso Denegado</h1>
+        <p class="text-gray-700 dark:text-gray-300 mb-6 text-lg">No tiene permisos suficientes para acceder a esta página.</p>
+        <a href="{% url 'index' %}" class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded hover:bg-blue-700">Ir al Inicio</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "auctions/admin/admin_layout.html" %}
+{% load static %}
+{% block body %}
+
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Encabezado de Página -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Gestión de Usuarios</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Administre las cuentas, roles y estados de los usuarios registrados</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{% url 'admin_create_user' %}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm w-full sm:w-auto">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span>Crear Nuevo Usuario</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal con Tabla Responsiva -->
+    <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">
+                Todos los Usuarios <span class="text-xs font-normal text-neutral-500 dark:text-neutral-400">({{ users|length }})</span>
+            </h2>
+        </div>
+
+        <!-- Tabla con scroll horizontal garantizado en móvil -->
+        <div class="overflow-x-auto w-full rounded-xl border border-neutral-200 dark:border-neutral-800">
+            <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
+                <thead class="bg-neutral-50 dark:bg-neutral-800/60 text-neutral-500 dark:text-neutral-400 uppercase text-[11px] font-semibold border-b border-neutral-200 dark:border-neutral-800">
+                    <tr>
+                        <th class="px-4 py-3">Usuario</th>
+                        <th class="px-4 py-3">Correo</th>
+                        <th class="px-4 py-3 text-center">Estado</th>
+                        <th class="px-4 py-3 text-center">Rol</th>
+                        <th class="px-4 py-3 text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    {% for u in users %}
+                    <tr class="hover:bg-neutral-50/80 dark:hover:bg-neutral-800/40 transition">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                {% if u.profile_picture %}
+                                    <img src="{{ u.profile_picture.url }}" alt="{{ u.username }}" class="h-8 w-8 rounded-full object-cover shrink-0 border border-neutral-200 dark:border-neutral-700">
+                                {% else %}
+                                    <img src="{% static 'auctions/default_pfp.svg' %}" alt="{{ u.username }}" class="h-8 w-8 rounded-full shrink-0 border border-neutral-200 dark:border-neutral-700">
+                                {% endif %}
+                                <div class="min-w-0">
+                                    <div class="font-semibold text-neutral-900 dark:text-white">{{ u.username }}</div>
+                                    <div class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">{{ u.first_name }} {{ u.last_name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-neutral-600 dark:text-neutral-300">{{ u.email|default:"--" }}</td>
+                        <td class="px-4 py-3 text-center">
+                            {% if u.is_active %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Activo</span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            {% if u.is_superuser %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">Admin</span>
+                            {% elif u.is_staff %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">Staff</span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">Usuario</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <div class="inline-flex items-center gap-1.5">
+                                <a href="{% url 'admin_edit_user' u.id %}" class="px-2.5 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 text-xs font-medium transition">
+                                    Editar
+                                </a>
+                                <form action="{% url 'admin_toggle_user' u.id %}" method="post" class="inline">
+                                    {% csrf_token %}
+                                    {% if u.is_active %}
+                                        <button type="submit" class="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-medium transition">
+                                            Desactivar
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-medium transition">
+                                            Activar
+                                        </button>
+                                    {% endif %}
+                                </form>
+                                <form action="{% url 'admin_delete_user' u.id %}" method="post" class="inline" onsubmit="return confirm('Esta seguro de que desea eliminar este usuario permanentemente?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="px-2.5 py-1 rounded-lg bg-red-50 dark:bg-red-950/50 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 text-xs font-medium transition">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400 text-sm">
+                            No se encontraron usuarios registrados.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

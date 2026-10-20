@@ -1,0 +1,148 @@
+{% extends "auctions/admin/admin_layout.html" %}
+{% load static %}
+{% block body %}
+
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Encabezado de Página -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Panel Principal de Administración</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Resumen general y métricas en tiempo real de {{ site_config.site_name }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'admin_customize_home' %}" class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm">
+                Personalizar Portada
+            </a>
+            <a href="{% url 'index' %}" target="_blank" class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl text-xs font-medium border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                Ver Sitio
+            </a>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Métricas Responsivas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <!-- Usuarios -->
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs transition hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Total Usuarios</span>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-baseline justify-between">
+                <p class="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">{{ total_users }}</p>
+                <a href="{% url 'manage_users' %}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium">Gestionar &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Total Subastas -->
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs transition hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Total Subastas</span>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-baseline justify-between">
+                <p class="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">{{ total_listings }}</p>
+                <a href="{% url 'manage_listings' %}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Gestionar &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Subastas Activas -->
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs transition hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Subastas Activas</span>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-baseline justify-between">
+                <p class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight">{{ active_listings }}</p>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">En curso</span>
+            </div>
+        </div>
+
+        <!-- Subastas Inactivas -->
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs transition hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Subastas Cerradas</span>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-baseline justify-between">
+                <p class="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">{{ inactive_listings }}</p>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">Finalizadas</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accesos Rápidos Responsivos -->
+    <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 sm:p-6 shadow-xs">
+        <h2 class="text-base font-bold text-neutral-900 dark:text-white mb-4">Acciones y Accesos Rápidos</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <a href="{% url 'admin_create_user' %}" class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition group">
+                <div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">Crear Nuevo Usuario</p>
+                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Dar de alta cuentas directamente</p>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_create_listing' %}" class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition group">
+                <div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Publicar Nueva Subasta</p>
+                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Crear artículo oficial</p>
+                </div>
+            </a>
+
+            <a href="{% url 'manage_categories' %}" class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-amber-500 dark:hover:border-amber-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition group">
+                <div class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">Gestionar Categorías</p>
+                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Añadir o editar categorías</p>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_site_config' %}" class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-purple-500 dark:hover:border-purple-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition group">
+                <div class="w-9 h-9 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400">Configuración y Divisas</p>
+                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Tasas de cambio USD, Bs y EUR</p>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_customize_home' %}" class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition group">
+                <div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Personalizar Portada</p>
+                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Editar 100% de la página de inicio</p>
+                </div>
+            </a>
+
+            <a href="{% url 'reports' %}" class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-cyan-500 dark:hover:border-cyan-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition group">
+                <div class="w-9 h-9 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400">Reportes y Métricas</p>
+                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Estadísticas y gráficos detallados</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

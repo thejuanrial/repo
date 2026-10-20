@@ -1,0 +1,275 @@
+{% extends "auctions/admin/admin_layout.html" %}
+{% load static %}
+{% block body %}
+
+<div class="space-y-6 max-w-5xl mx-auto">
+    <!-- Encabezado de Página Responsivo -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Personalizar Página Principal</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Controle el 100% de los textos, imágenes, secciones y orden de la portada</p>
+        </div>
+        <div class="flex items-center gap-2.5 w-full sm:w-auto">
+            <a href="{% url 'index' %}" target="_blank" class="flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                Ver Portada
+            </a>
+            <button form="customize-form" type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm">
+                Guardar Cambios
+            </button>
+        </div>
+    </div>
+
+    <form id="customize-form" method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- 1. BARRA DE ANUNCIO SUPERIOR -->
+        <div class="bg-white dark:bg-[#0f141e] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">1. Barra de Anuncio Superior</h2>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">Muestra una barra destacada en la parte superior del portal.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" name="show_announcement" {% if config.show_announcement %}checked{% endif %} class="sr-only peer">
+                    <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Mostrar Barra</span>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Texto del Anuncio</label>
+                    <input type="text" name="announcement_text" value="{{ config.announcement_text }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Enlace Opcional (URL)</label>
+                    <input type="text" name="announcement_link" value="{{ config.announcement_link }}" placeholder="Ej: /category/ o https://..." class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SECCIÓN HERO (BANNER PRINCIPAL) -->
+        <div class="bg-white dark:bg-[#0f141e] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">2. Sección Hero (Banner Principal)</h2>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">El encabezado principal visible al entrar a la plataforma.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" name="show_hero" {% if config.show_hero %}checked{% endif %} class="sr-only peer">
+                    <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Mostrar Hero</span>
+                </label>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título Principal del Hero *</label>
+                    <input type="text" name="hero_title" value="{{ config.hero_title }}" required class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Subtítulo / Mensaje de Bienvenida</label>
+                    <textarea name="hero_subtitle" rows="3" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">{{ config.hero_subtitle }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Imagen de Fondo o Lateral del Hero</label>
+                    {% if config.hero_image %}
+                        <div class="flex items-center gap-3 mb-2">
+                            <img src="{{ config.hero_image.url }}" alt="Hero actual" class="h-16 w-28 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700">
+                            <span class="text-xs text-neutral-400">Imagen actual configurada</span>
+                        </div>
+                    {% endif %}
+                    <input type="file" name="hero_image" accept="image/*" class="w-full px-3 py-2 rounded-xl text-xs bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neutral-900 file:text-white dark:file:bg-white dark:file:text-neutral-900 hover:file:opacity-90">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                    <div class="bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <h3 class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Botón Principal</h3>
+                        <input type="text" name="hero_cta_text" value="{{ config.hero_cta_text }}" placeholder="Texto botón" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white">
+                        <input type="text" name="hero_cta_url" value="{{ config.hero_cta_url }}" placeholder="Enlace URL (ej: #subastas)" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white">
+                    </div>
+                    <div class="bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <h3 class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Botón Secundario</h3>
+                        <input type="text" name="hero_secondary_cta_text" value="{{ config.hero_secondary_cta_text }}" placeholder="Texto botón" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white">
+                        <input type="text" name="hero_secondary_cta_url" value="{{ config.hero_secondary_cta_url }}" placeholder="Enlace URL (ej: /create_listing/)" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SECCIÓN DE BENEFICIOS / CARACTERÍSTICAS -->
+        <div class="bg-white dark:bg-[#0f141e] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">3. Tarjetas de Beneficios / Características</h2>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">Cuadrícula informativa para generar confianza en los usuarios.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" name="show_features" {% if config.show_features %}checked{% endif %} class="sr-only peer">
+                    <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Mostrar Sección</span>
+                </label>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título de la Sección</label>
+                        <input type="text" name="features_title" value="{{ config.features_title }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Subtítulo de la Sección</label>
+                        <input type="text" name="features_subtitle" value="{{ config.features_subtitle }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div class="bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <h3 class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Tarjeta 1</h3>
+                        <input type="text" name="feature_1_title" value="{{ config.feature_1_title }}" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Título">
+                        <textarea name="feature_1_desc" rows="3" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Descripción">{{ config.feature_1_desc }}</textarea>
+                    </div>
+                    <div class="bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <h3 class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Tarjeta 2</h3>
+                        <input type="text" name="feature_2_title" value="{{ config.feature_2_title }}" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Título">
+                        <textarea name="feature_2_desc" rows="3" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Descripción">{{ config.feature_2_desc }}</textarea>
+                    </div>
+                    <div class="bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <h3 class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Tarjeta 3</h3>
+                        <input type="text" name="feature_3_title" value="{{ config.feature_3_title }}" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Título">
+                        <textarea name="feature_3_desc" rows="3" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Descripción">{{ config.feature_3_desc }}</textarea>
+                    </div>
+                    <div class="bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <h3 class="text-xs font-bold text-neutral-800 dark:text-neutral-200">Tarjeta 4</h3>
+                        <input type="text" name="feature_4_title" value="{{ config.feature_4_title }}" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Título">
+                        <textarea name="feature_4_desc" rows="3" class="w-full px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white" placeholder="Descripción">{{ config.feature_4_desc }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SECCIÓN DE SUBASTAS EN PORTADA -->
+        <div class="bg-white dark:bg-[#0f141e] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">4. Sección de Subastas</h2>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">Configure cómo se muestran las subastas en la portada.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" name="show_listings" {% if config.show_listings %}checked{% endif %} class="sr-only peer">
+                    <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Mostrar Subastas</span>
+                </label>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título de la Sección de Subastas</label>
+                        <input type="text" name="listings_section_title" value="{{ config.listings_section_title }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Subtítulo de la Sección</label>
+                        <input type="text" name="listings_section_subtitle" value="{{ config.listings_section_subtitle }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Cantidad Máxima de Subastas en Portada</label>
+                        <select name="listings_limit" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="4" {% if config.listings_limit == 4 %}selected{% endif %}>4 Subastas</option>
+                            <option value="6" {% if config.listings_limit == 6 %}selected{% endif %}>6 Subastas</option>
+                            <option value="8" {% if config.listings_limit == 8 %}selected{% endif %}>8 Subastas</option>
+                            <option value="12" {% if config.listings_limit == 12 %}selected{% endif %}>12 Subastas</option>
+                            <option value="16" {% if config.listings_limit == 16 %}selected{% endif %}>16 Subastas</option>
+                            <option value="24" {% if config.listings_limit == 24 %}selected{% endif %}>24 Subastas</option>
+                            <option value="0" {% if config.listings_limit == 0 %}selected{% endif %}>Mostrar Todas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Criterio de Ordenación</label>
+                        <select name="listings_order" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="recent" {% if config.listings_order == 'recent' %}selected{% endif %}>Más Recientes Primero</option>
+                            <option value="most_bids" {% if config.listings_order == 'most_bids' %}selected{% endif %}>Con Más Pujas (Populares)</option>
+                            <option value="price_high" {% if config.listings_order == 'price_high' %}selected{% endif %}>Mayor Precio Primero</option>
+                            <option value="price_low" {% if config.listings_order == 'price_low' %}selected{% endif %}>Menor Precio Primero</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. SECCIÓN DE CATEGORÍAS EN PORTADA -->
+        <div class="bg-white dark:bg-[#0f141e] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">5. Sección de Categorías en Portada</h2>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">Barra de accesos rápidos a las categorías activas.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" name="show_categories_preview" {% if config.show_categories_preview %}checked{% endif %} class="sr-only peer">
+                    <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Mostrar Categorías</span>
+                </label>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título de la Sección de Categorías</label>
+                <input type="text" name="categories_section_title" value="{{ config.categories_section_title }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <!-- 6. BANNER DE LLAMADO A LA ACCIÓN (CTA INFERIOR) -->
+        <div class="bg-white dark:bg-[#0f141e] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">6. Banner de Llamado a la Acción (CTA Inferior)</h2>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">Bloque llamativo antes del pie de página para invitar a nuevos usuarios.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" name="show_cta_banner" {% if config.show_cta_banner %}checked{% endif %} class="sr-only peer">
+                    <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Mostrar Banner</span>
+                </label>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título del Banner</label>
+                    <input type="text" name="cta_banner_title" value="{{ config.cta_banner_title }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Texto Descriptivo</label>
+                    <textarea name="cta_banner_text" rows="2" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">{{ config.cta_banner_text }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Texto del Botón</label>
+                        <input type="text" name="cta_banner_button_text" value="{{ config.cta_banner_button_text }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Enlace del Botón (URL)</label>
+                        <input type="text" name="cta_banner_button_url" value="{{ config.cta_banner_button_url }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción Responsivos -->
+        <div class="pt-2 flex flex-col sm:flex-row justify-end gap-3">
+            <a href="{% url 'admin_view' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                Cancelar
+            </a>
+            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm">
+                Guardar Todas las Personalizaciones
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

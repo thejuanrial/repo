@@ -1,0 +1,295 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block body %}
+
+<section class="bg-white dark:bg-[#0b0f17] text-neutral-900 dark:text-neutral-100 min-h-screen w-full pt-16">
+
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <!-- 1. BARRA DE ANUNCIO SUPERIOR (MINIMALISTA) -->
+    {% if site_config.show_announcement and site_config.announcement_text %}
+    <aside aria-label="Anuncio" class="bg-neutral-950 text-neutral-300 py-2.5 px-4 text-center text-xs tracking-wide flex items-center justify-center gap-2 border-b border-neutral-800">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span class="font-normal">{{ site_config.announcement_text }}</span>
+        {% if site_config.announcement_link %}
+            <a href="{{ site_config.announcement_link }}" class="underline font-semibold text-white hover:text-neutral-200 transition-colors ml-1">Conocer más &rarr;</a>
+        {% endif %}
+    </aside>
+    {% endif %}
+
+    <!-- 2. SECCIÓN HERO (ESTILO MINIMALISTA, ELEGANTE Y CENTRADO) -->
+    {% if site_config.show_hero %}
+    <div class="relative overflow-hidden bg-gradient-to-b from-neutral-50/70 to-white dark:from-[#0f141f] dark:to-[#0b0f17] border-b border-neutral-200/70 dark:border-neutral-800/80">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28 max-w-7xl">
+            {% if site_config.hero_image %}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    {% if site_config.site_tagline %}
+                    <div>
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                            {{ site_config.site_tagline }}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-semibold text-neutral-950 dark:text-white tracking-tight leading-[1.12]">
+                        {{ site_config.hero_title }}
+                    </h1>
+
+                    {% if site_config.hero_subtitle %}
+                    <p class="text-sm sm:text-base lg:text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-xl mx-auto lg:mx-0 font-normal">
+                        {{ site_config.hero_subtitle }}
+                    </p>
+                    {% endif %}
+
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
+                        {% if site_config.hero_cta_text %}
+                        <a href="{{ site_config.hero_cta_url|default:'#subastas' }}" class="w-full sm:w-auto text-center px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-medium rounded-xl transition-all shadow-sm">
+                            {{ site_config.hero_cta_text }}
+                        </a>
+                        {% endif %}
+
+                        {% if site_config.hero_secondary_cta_text %}
+                        <a href="{{ site_config.hero_secondary_cta_url|default:'/create_listing/' }}" class="w-full sm:w-auto text-center px-6 py-3 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 text-neutral-700 dark:text-neutral-200 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 transition-all">
+                            {{ site_config.hero_secondary_cta_text }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 flex justify-center w-full">
+                    <div class="relative w-full max-w-md rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-sm bg-neutral-100 dark:bg-neutral-900">
+                        <img src="{{ site_config.hero_image.url }}" alt="{{ site_config.hero_title }}" class="object-cover w-full h-[320px] sm:h-[360px]">
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Hero Centrado Minimalista (Sin cajas ni tarjetas innecesarias) -->
+            <div class="max-w-3xl mx-auto text-center space-y-6">
+                {% if site_config.site_tagline %}
+                <div class="flex justify-center">
+                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800/90 border border-neutral-200 dark:border-neutral-700/80 shadow-2xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                        {{ site_config.site_tagline }}
+                    </span>
+                </div>
+                {% endif %}
+
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-semibold text-neutral-950 dark:text-white tracking-tight leading-[1.12]">
+                    {{ site_config.hero_title }}
+                </h1>
+
+                {% if site_config.hero_subtitle %}
+                <p class="text-sm sm:text-base lg:text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-2xl mx-auto font-normal">
+                    {{ site_config.hero_subtitle }}
+                </p>
+                {% endif %}
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
+                    {% if site_config.hero_cta_text %}
+                    <a href="{{ site_config.hero_cta_url|default:'#subastas' }}" class="w-full sm:w-auto text-center px-7 py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-medium rounded-xl transition-all shadow-sm">
+                        {{ site_config.hero_cta_text }}
+                    </a>
+                    {% endif %}
+
+                    {% if site_config.hero_secondary_cta_text %}
+                    <a href="{{ site_config.hero_secondary_cta_url|default:'/create_listing/' }}" class="w-full sm:w-auto text-center px-7 py-3.5 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 text-neutral-700 dark:text-neutral-200 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 transition-all">
+                        {{ site_config.hero_secondary_cta_text }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 3. SECCIÓN DE CATEGORÍAS (PILLS MINIMALISTAS RESPONSIVE) -->
+    {% if site_config.show_categories_preview and categories %}
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xs sm:text-sm font-semibold tracking-wide text-neutral-800 dark:text-neutral-200 uppercase">
+                {{ site_config.categories_section_title }}
+            </h2>
+            <a href="{% url 'categories' %}" class="text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition">
+                Ver todas &rarr;
+            </a>
+        </div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap no-scrollbar">
+            {% for cat in categories %}
+            <a href="{% url 'category' cat.name %}" class="shrink-0 px-3.5 py-1.5 bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-300 transition-colors shadow-2xs">
+                {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 4. SECCIÓN DE CARACTERÍSTICAS / VALORES (MINIMALISTA) -->
+    {% if site_config.show_features %}
+    <div class="border-y border-neutral-200/80 dark:border-neutral-800/80 bg-neutral-50/50 dark:bg-[#0c1018] py-12 sm:py-14">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+            <div class="max-w-2xl mb-8 sm:mb-10">
+                <span class="text-xs font-mono uppercase tracking-wider text-neutral-400 block mb-1">Ventajas</span>
+                <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+                    {{ site_config.features_title }}
+                </h2>
+                {% if site_config.features_subtitle %}
+                <p class="text-neutral-500 dark:text-neutral-400 mt-2 text-sm leading-relaxed">
+                    {{ site_config.features_subtitle }}
+                </p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <!-- Beneficio 1 -->
+                <div class="space-y-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
+                    <span class="text-xs font-mono text-neutral-400 dark:text-neutral-500 block">01</span>
+                    <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">{{ site_config.feature_1_title }}</h3>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{{ site_config.feature_1_desc }}</p>
+                </div>
+
+                <!-- Beneficio 2 -->
+                <div class="space-y-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
+                    <span class="text-xs font-mono text-neutral-400 dark:text-neutral-500 block">02</span>
+                    <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">{{ site_config.feature_2_title }}</h3>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{{ site_config.feature_2_desc }}</p>
+                </div>
+
+                <!-- Beneficio 3 -->
+                <div class="space-y-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
+                    <span class="text-xs font-mono text-neutral-400 dark:text-neutral-500 block">03</span>
+                    <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">{{ site_config.feature_3_title }}</h3>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{{ site_config.feature_3_desc }}</p>
+                </div>
+
+                <!-- Beneficio 4 -->
+                <div class="space-y-2 border-l border-neutral-200 dark:border-neutral-800 pl-4">
+                    <span class="text-xs font-mono text-neutral-400 dark:text-neutral-500 block">04</span>
+                    <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">{{ site_config.feature_4_title }}</h3>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{{ site_config.feature_4_desc }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 5. SECCIÓN DE SUBASTAS EN PORTADA (MINIMALISTA) -->
+    {% if site_config.show_listings %}
+    <div id="subastas" class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 max-w-7xl">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-neutral-200/70 dark:border-neutral-800 gap-4">
+            <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-neutral-400 block mb-1">Catálogo Activo</span>
+                <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+                    {{ site_config.listings_section_title }}
+                </h2>
+                {% if site_config.listings_section_subtitle %}
+                <p class="text-neutral-500 dark:text-neutral-400 mt-1 text-sm">
+                    {{ site_config.listings_section_subtitle }}
+                </p>
+                {% endif %}
+            </div>
+            <div>
+                <span class="text-xs font-mono px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+                    {{ listings|length }} artículo{{ listings|length|pluralize:"s" }}
+                </span>
+            </div>
+        </div>
+
+        {% if listings %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+            {% for listing in listings %}
+            <div class="group bg-white dark:bg-neutral-900 rounded-xl overflow-hidden border border-neutral-200/80 dark:border-neutral-800/80 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200 flex flex-col justify-between">
+                <a href="{% url 'listing' listing.id %}" class="block overflow-hidden relative bg-neutral-100 dark:bg-neutral-950 aspect-[4/3]">
+                    {% if listing.image %}
+                        <img src="/media/{{ listing.image }}" alt="{{ listing.title }}" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-neutral-400 text-xs">Sin imagen disponible</div>
+                    {% endif %}
+                    
+                    <span class="absolute top-2.5 right-2.5 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md bg-neutral-900/80 dark:bg-white/90 text-white dark:text-neutral-950 backdrop-blur-xs">
+                        Activa
+                    </span>
+                </a>
+
+                <div class="p-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 block mb-1">
+                            {{ listing.category }}
+                        </span>
+                        <a href="{% url 'listing' listing.id %}" class="text-sm font-semibold text-neutral-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-1">
+                            {{ listing.title }}
+                        </a>
+                        <p class="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mt-1 leading-relaxed">
+                            {{ listing.description }}
+                        </p>
+                    </div>
+
+                    <div class="pt-3.5 border-t border-neutral-100 dark:border-neutral-800/80 mt-4 flex items-end justify-between">
+                        <div>
+                            <span class="text-[10px] text-neutral-400 uppercase tracking-wider block">Puja actual</span>
+                            <span class="text-base font-bold text-neutral-900 dark:text-white tracking-tight">
+                                ${{ listing.starting_value|format_usd }} <span class="text-[11px] font-normal text-neutral-400">USD</span>
+                            </span>
+                            {% if site_config.show_currency_conversion %}
+                            <div class="text-[11px] text-neutral-500 dark:text-neutral-400 font-mono mt-0.5 space-x-1">
+                                <span class="text-neutral-700 dark:text-neutral-300 font-medium">Bs. {{ listing.starting_value|to_bs }}</span>
+                                <span class="text-neutral-300 dark:text-neutral-600">·</span>
+                                <span>{{ listing.starting_value|to_eur }} &euro;</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'listing' listing.id %}" class="px-3.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-xs font-medium rounded-lg transition-colors shadow-2xs">
+                            Pujar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 p-8 max-w-lg mx-auto">
+            <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">No hay subastas activas disponibles.</h3>
+            <p class="text-xs text-neutral-500 mt-1">Publique un nuevo artículo para iniciar las ofertas en la plataforma.</p>
+            <a href="{% url 'create_listing' %}" class="mt-4 inline-block px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 text-xs font-semibold rounded-lg transition">
+                Crear Primera Subasta
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 6. BANNER CTA INFERIOR (MINIMALISTA) -->
+    {% if site_config.show_cta_banner %}
+    <div class="bg-neutral-950 text-white py-14 sm:py-16 border-t border-neutral-800">
+        <div class="container mx-auto px-4 sm:px-6 max-w-4xl text-center space-y-4">
+            <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+                {{ site_config.cta_banner_title }}
+            </h2>
+            {% if site_config.cta_banner_text %}
+            <p class="text-sm text-neutral-400 max-w-xl mx-auto leading-relaxed">
+                {{ site_config.cta_banner_text }}
+            </p>
+            {% endif %}
+            <div class="pt-2">
+                <a href="{{ site_config.cta_banner_button_url|default:'/register/' }}" class="inline-block px-6 py-2.5 bg-white text-neutral-950 hover:bg-neutral-100 font-medium text-xs rounded-xl shadow-sm transition">
+                    {{ site_config.cta_banner_button_text }}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}
+

@@ -1,0 +1,156 @@
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\forms.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\commerce\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+Not Found: /admin_view/
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\templatetags\custom_filters.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+Bids for listing 6: <QuerySet []>
+No bids found for listing 6
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /favicon.ico
+Internal Server Error: /register/
+Traceback (most recent call last):
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py", line 104, in register
+    send_mail(
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 642, in auth
+    (code, resp) = self.docmd("AUTH", mechanism + " " + response)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 432, in docmd
+    return self.getreply()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 405, in getreply
+    raise SMTPServerDisconnected("Connection unexpectedly closed")
+smtplib.SMTPServerDisconnected: Connection unexpectedly closed
+Not Found: /accounts/logout/
+Internal Server Error: /register/
+Traceback (most recent call last):
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py", line 104, in register
+    send_mail(
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 642, in auth
+    (code, resp) = self.docmd("AUTH", mechanism + " " + response)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 432, in docmd
+    return self.getreply()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 405, in getreply
+    raise SMTPServerDisconnected("Connection unexpectedly closed")
+smtplib.SMTPServerDisconnected: Connection unexpectedly closed
+Internal Server Error: /register/
+Traceback (most recent call last):
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\auctions\views.py", line 104, in register
+    send_mail(
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\__init__.py", line 88, in send_mail
+    return mail.send()
+           ^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 642, in auth
+    (code, resp) = self.docmd("AUTH", mechanism + " " + response)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 432, in docmd
+    return self.getreply()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\sistemas2\AppData\Local\Programs\Python\Python312\Lib\smtplib.py", line 405, in getreply
+    raise SMTPServerDisconnected("Connection unexpectedly closed")
+smtplib.SMTPServerDisconnected: Connection unexpectedly closed
+Not Found: /accounts/login/
+Not Found: /accounts/login/
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+Not Found: /admin_view/
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\commerce\settings.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sistemas2\Downloads\Nueva carpeta\BidBazaar\commerce\settings.py changed, reloading.
+Watching for file changes with StatReloader

@@ -7,13 +7,15 @@ from django.conf import settings
 
 def get_current_bid_value(listing_id):
     """
-    returns the highest current bid for a listing as an integer
+    returns the highest current bid for a listing as an integer or float
     """
     bids = Bid.objects.filter(listing_id=listing_id)
     if bids.exists():
-        return bids.aggregate(Max('value'))['value__max']
+        max_val = bids.aggregate(Max('value'))['value__max']
+        return max_val if max_val is not None else 0
     else:
-        return Listing.objects.filter(id=listing_id)[0].starting_value
+        listing = Listing.objects.filter(id=listing_id).first()
+        return listing.starting_value if listing else 0
 
 import logging
 

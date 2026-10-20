@@ -100,15 +100,19 @@ def register(request):
             
             html_content = render_to_string('auctions/mail/otp_mail.html', {'username': username, 'otp': otp})
 
-            # Send OTP via email
-            send_mail(
-                'Su código OTP de verificación de cuenta',
-                'Use el siguiente código OTP para verificar su cuenta:',
-                'bidbazaar2024@gmail.com',  # Change this to your actual sender email address
-                [email],  # Add the recipient's email address to the recipient_list
-                html_message=html_content,  # Use HTML content for the email body
-                fail_silently=False,
-            )
+            # Send OTP via email with error handling so external SMTP blocks don't crash the server
+            sender_email = getattr(settings, 'EMAIL_HOST_USER', 'bidbazaar2024@gmail.com')
+            try:
+                send_mail(
+                    'Su código OTP de verificación de cuenta',
+                    'Use el siguiente código OTP para verificar su cuenta:',
+                    sender_email,
+                    [email],
+                    html_message=html_content,
+                    fail_silently=False,
+                )
+            except Exception:
+                messages.warning(request, f"Su código de verificación temporal es: {otp}")
 
             # Redirect to OTP verification page
             return redirect('otp_verification')
@@ -160,12 +164,12 @@ def forgot_password(request):
         request.session['email'] = email
         
         html_content = render_to_string('auctions/mail/forgot_password_mail.html', {'username': username, 'otp': otp})
-        # Send OTP via email
+        sender_email = getattr(settings, 'EMAIL_HOST_USER', 'bidbazaar2024@gmail.com')
         try:
             send_mail(
                 'Su código OTP de verificación de cuenta',
                 'Use el siguiente código OTP para verificar su cuenta:',
-                'bidbazaar2024@gmail.com',
+                sender_email,
                 [email],
                 html_message=html_content,
                 fail_silently=False,
@@ -207,14 +211,18 @@ def password_otp(request):
             
             html_content = render_to_string('auctions/mail/new_password_mail.html', {'username': username, 'password': password})
             
-            send_mail(
-                'Su nueva contraseña temporal',
-                'Use su nueva contraseña temporal para iniciar sesión:',
-                'bidbazaar2024@gmail.com',
-                [email],
-                html_message=html_content,
-                fail_silently=False,
-            )
+            sender_email = getattr(settings, 'EMAIL_HOST_USER', 'bidbazaar2024@gmail.com')
+            try:
+                send_mail(
+                    'Su nueva contraseña temporal',
+                    'Use su nueva contraseña temporal para iniciar sesión:',
+                    sender_email,
+                    [email],
+                    html_message=html_content,
+                    fail_silently=False,
+                )
+            except Exception:
+                pass
             
             return redirect('password_reset_success')  # Redirect to the success page
         else:

@@ -83,6 +83,7 @@ def logout_view(request):
 
 
 def register(request):
+    config = SiteConfiguration.get_config()
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -90,34 +91,51 @@ def register(request):
         confirmation = request.POST.get('confirmation')
 
         # Basic validation
-        if password == confirmation:
-            # Generate OTP
-            otp = random.randint(100000, 999999)
-            request.session['otp'] = otp
-            request.session['username'] = username
-            request.session['email'] = email
-            request.session['password'] = password
-            
-            html_content = render_to_string('auctions/mail/otp_mail.html', {'username': username, 'otp': otp})
+        if not username or not password:
+            return render(request, 'auctions/authentication/register.html', {'message': 'Por favor complete todos los campos obligatorios.'})
 
-            # Send OTP via email with error handling so external SMTP blocks don't crash the server
-            sender_email = getattr(settings, 'EMAIL_HOST_USER', 'bidbazaar2024@gmail.com')
-            try:
-                send_mail(
-                    'Su código OTP de verificación de cuenta',
-                    'Use el siguiente código OTP para verificar su cuenta:',
-                    sender_email,
-                    [email],
-                    html_message=html_content,
-                    fail_silently=False,
-                )
-            except Exception:
-                messages.warning(request, f"Su código de verificación temporal es: {otp}")
+        if User.objects.filter(username=username).exists():
+            return render(request, 'auctions/authentication/register.html', {'message': 'El nombre de usuario ya está registrado. Por favor elija otro.'})
 
-            # Redirect to OTP verification page
-            return redirect('otp_verification')
-        else:
-            return render(request, 'auctions/authentication/register.html', {'message': 'Las contraseñas no coinciden'})
+        if password != confirmation:
+            return render(request, 'auctions/authentication/register.html', {'message': 'Las contraseñas no coinciden.'})
+
+        # Si la verificación OTP está deshabilitada (modo directo: solo registrar los datos y listo)
+        if not config.enable_otp_verification:
+            user = User.objects.create(
+                username=username,
+                email=email,
+                password=make_password(password)
+            )
+            login(request, user)
+            messages.success(request, f"¡Bienvenido {username}! Su cuenta ha sido creada exitosamente.")
+            return redirect('index')
+
+        # Modo con OTP habilitado
+        otp = random.randint(100000, 999999)
+        request.session['otp'] = otp
+        request.session['username'] = username
+        request.session['email'] = email
+        request.session['password'] = password
+        
+        html_content = render_to_string('auctions/mail/otp_mail.html', {'username': username, 'otp': otp})
+
+        # Send OTP via email with error handling so external SMTP blocks don't crash the server
+        sender_email = getattr(settings, 'EMAIL_HOST_USER', 'bidbazaar2024@gmail.com')
+        try:
+            send_mail(
+                'Su código OTP de verificación de cuenta',
+                'Use el siguiente código OTP para verificar su cuenta:',
+                sender_email,
+                [email],
+                html_message=html_content,
+                fail_silently=False,
+            )
+        except Exception:
+            messages.warning(request, f"Su código de verificación temporal es: {otp}")
+
+        # Redirect to OTP verification page
+        return redirect('otp_verification')
 
     return render(request, 'auctions/authentication/register.html')
 
@@ -146,6 +164,7 @@ def otp_success(request):
     return render(request, 'auctions/authentication/otp_success.html')
 
 def forgot_password(request):
+    config = SiteConfiguration.get_config()
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -156,6 +175,17 @@ def forgot_password(request):
         except User.DoesNotExist:
             return render(request, 'auctions/authentication/forgot_password.html', {'message': 'Nombre de usuario y/o correo electrónico no válidos.'})
         
+        # Si la verificación OTP está deshabilitada en la configuración, restablecer directamente
+        if not config.enable_otp_verification:
+            new_password = User.objects.make_random_password()
+            user.set_password(new_password)
+            user.save()
+            return render(request, 'auctions/authentication/password_reset_successful.html', {
+                'direct_reset': True,
+                'temp_password': new_password,
+                'username': username
+            })
+
         # Generate OTP
         otp = random.randint(100000, 999999)
         
@@ -851,6 +881,7 @@ def admin_site_config(request):
             pass
 
         config.show_currency_conversion = request.POST.get('show_currency_conversion') == 'on'
+        config.enable_otp_verification = request.POST.get('enable_otp_verification') == 'on'
 
         if 'site_logo' in request.FILES:
             config.site_logo = request.FILES['site_logo']

@@ -39,6 +39,7 @@ class SiteConfiguration(models.Model):
     usd_to_bs_rate = models.DecimalField(max_digits=12, decimal_places=4, default=45.0000)
     eur_to_bs_rate = models.DecimalField(max_digits=12, decimal_places=4, default=48.5000)
     show_currency_conversion = models.BooleanField(default=True)
+    enable_otp_verification = models.BooleanField(default=False)
 
     def to_bs(self, usd_amount):
         try:

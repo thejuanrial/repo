@@ -101,6 +101,30 @@
                 </div>
             </div>
 
+            <!-- Verificación y Autenticación OTP -->
+            <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">Verificación de Cuentas por Código OTP</h3>
+                        <p class="text-xs text-neutral-500 dark:text-neutral-400">Controla si se exige confirmar un código enviado por correo al registrarse.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" name="enable_otp_verification" {% if config.enable_otp_verification %}checked{% endif %} class="sr-only peer">
+                        <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-2.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">Activar OTP Obligatorio</span>
+                    </label>
+                </div>
+
+                <div class="p-3.5 bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs space-y-1">
+                    <p class="text-neutral-700 dark:text-neutral-300">
+                        <strong class="text-emerald-600 dark:text-emerald-400">Desactivado (Recomendado):</strong> Al registrarse, la cuenta se crea de inmediato con los datos ingresados y el usuario inicia sesión directamente sin requerir códigos ni esperar correos.
+                    </p>
+                    <p class="text-neutral-500 dark:text-neutral-400">
+                        <strong>Activado:</strong> El sistema enviará un código de verificación de 6 dígitos al correo electrónico del usuario antes de habilitar la cuenta.
+                    </p>
+                </div>
+            </div>
+
             <!-- Logo -->
             <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
                 <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">Logotipo del Sitio</label>

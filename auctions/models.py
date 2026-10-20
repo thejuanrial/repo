@@ -126,6 +126,69 @@ class SiteConfiguration(models.Model):
     @classmethod
     def get_config(cls):
         config, _ = cls.objects.get_or_create(pk=1)
+        # Sanitizar automáticamente cualquier remanente de subastas en la base de datos
+        replacements = [
+            ("Subastas Recientes", "Productos Destacados"),
+            ("subastas recientes", "productos destacados"),
+            ("Explorar Subastas", "Explorar Productos"),
+            ("explorar subastas", "explorar productos"),
+            ("#subastas", "#productos"),
+            ("Crear Subasta", "Vender Producto"),
+            ("crear subasta", "vender producto"),
+            ("Subastas en Línea", "Compra Directa"),
+            ("subastas en línea", "compra directa"),
+            ("Subastas en Linea", "Compra Directa"),
+            ("Puja con Confianza", "Compra Segura"),
+            ("puja con confianza", "compra segura"),
+            ("¿Listo para comenzar a pujar o vender?", "¿Listo para comenzar a comprar o vender?"),
+            ("Cree su cuenta gratuita en segundos y comience a participar en subastas en tiempo real.", "Cree su cuenta gratuita en segundos y comience a comprar y vender con total comodidad."),
+            ("Ofertas activas en tiempo real listas para recibir su puja", "Artículos disponibles para compra directa"),
+            ("Sumérjase en un mundo de posibilidades infinitas navegando por nuestra selección curada de artículos únicos.", "Navegue por una selección curada de productos a precios fijos y transparentes."),
+            ("Descubra una amplia variedad de subastas con de todo, desde coleccionables hasta artículos de última generación.", "Descubra una amplia variedad de artículos desde tecnología hasta coleccionables y más."),
+            ("Priorizamos la transparencia, la integridad y la seguridad. Nuestro sistema garantiza subastas justas y competitivas.", "Priorizamos la transparencia, la integridad y la seguridad en cada compra y venta."),
+            ("¡Bienvenido a nuestra plataforma de subastas en vivo!", "¡Bienvenido a nuestra plataforma de compra y venta!"),
+            ("Su plataforma de subastas en línea", "Su plataforma de compra y venta en línea"),
+            ("subastas", "productos"),
+            ("Subastas", "Productos"),
+            ("subasta", "producto"),
+            ("Subasta", "Producto"),
+            ("pujadores", "compradores"),
+            ("Pujadores", "Compradores"),
+            ("pujador", "comprador"),
+            ("Pujador", "Comprador"),
+            ("postores", "compradores"),
+            ("Postores", "Compradores"),
+            ("postor", "comprador"),
+            ("Postor", "Comprador"),
+            ("pujas", "compras"),
+            ("Pujas", "Compras"),
+            ("pujar", "comprar"),
+            ("Pujar", "Comprar"),
+            ("puja", "compra"),
+            ("Puja", "Compra"),
+        ]
+        text_fields = [
+            'announcement_text', 'site_tagline', 'hero_title', 'hero_subtitle',
+            'hero_cta_text', 'hero_cta_url', 'hero_secondary_cta_text', 'features_title',
+            'features_subtitle', 'feature_1_title', 'feature_1_desc', 'feature_2_title',
+            'feature_2_desc', 'feature_3_title', 'feature_3_desc', 'feature_4_title',
+            'feature_4_desc', 'categories_section_title', 'listings_section_title',
+            'listings_section_subtitle', 'cta_banner_title', 'cta_banner_text',
+            'cta_banner_button_text',
+        ]
+        dirty = False
+        for f in text_fields:
+            val = getattr(config, f, None)
+            if isinstance(val, str) and val:
+                new_val = val
+                for old, new in replacements:
+                    if old in new_val:
+                        new_val = new_val.replace(old, new)
+                if new_val != val:
+                    setattr(config, f, new_val)
+                    dirty = True
+        if dirty:
+            config.save()
         return config
 
 

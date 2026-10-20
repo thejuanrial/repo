@@ -5,11 +5,11 @@
     <!-- Encabezado de Página -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Editar Subasta</h1>
-            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Modificando la publicación: <span class="font-semibold text-neutral-800 dark:text-neutral-200">{{ listing.title }}</span></p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Editar Producto</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Modificando el producto: <span class="font-semibold text-neutral-800 dark:text-neutral-200">{{ listing.title }}</span></p>
         </div>
         <a href="{% url 'manage_listings' %}" class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition">
-            &larr; Volver a Subastas
+            &larr; Volver a Productos
         </a>
     </div>
 
@@ -19,7 +19,7 @@
             {% csrf_token %}
 
             <div>
-                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título de la Subasta *</label>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título del Producto *</label>
                 <input type="text" name="title" value="{{ listing.title }}" required class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
@@ -33,7 +33,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Valor Inicial ({{ site_config.currency_symbol }})</label>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Precio de Venta ({{ site_config.currency_symbol }})</label>
                     <input type="number" name="starting_value" value="{{ listing.starting_value }}" step="0.01" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
@@ -44,7 +44,7 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Imagen de la Subasta</label>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Imagen del Producto</label>
                 {% if listing.image %}
                     <div class="flex items-center gap-3 mb-2">
                         <img src="/media/{{ listing.image }}" alt="{{ listing.title }}" class="h-20 w-28 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700">
@@ -57,7 +57,7 @@
             <div class="pt-2">
                 <label class="inline-flex items-center gap-2 cursor-pointer text-xs sm:text-sm text-neutral-800 dark:text-neutral-200">
                     <input type="checkbox" name="auction_active" {% if listing.auction_active %}checked{% endif %} class="rounded text-blue-600 focus:ring-blue-500">
-                    <span>Subasta Activa y Visible en Catálogo</span>
+                    <span>Producto Disponible y Visible en Catálogo</span>
                 </label>
             </div>
 

@@ -82,10 +82,10 @@
                             <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'categories' %}">Categorías</a>
                     
                             {% if user.is_authenticated %}
-                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'create_listing' %}">Crear Subasta</a>
-                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'your_listings' %}">Mis Subastas</a>
-                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'won_listings' %}">Ganadas</a>
-                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'watch_list' %}">Seguimiento</a>
+                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'create_listing' %}">Vender Producto</a>
+                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'your_listings' %}">Mis Publicaciones</a>
+                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'won_listings' %}">Mis Compras</a>
+                            <a class="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors font-medium text-sm" href="{% url 'watch_list' %}">Favoritos</a>
                             {% endif %}
 
                             {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}
@@ -155,10 +155,10 @@
                         <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'categories' %}">Categorías</a>
                         
                         {% if user.is_authenticated %}
-                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'create_listing' %}">Crear Subasta</a>
-                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'your_listings' %}">Mis Subastas</a>
-                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'won_listings' %}">Subastas Ganadas</a>
-                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'watch_list' %}">Lista de Seguimiento</a>
+                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'create_listing' %}">Vender Producto</a>
+                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'your_listings' %}">Mis Publicaciones</a>
+                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'won_listings' %}">Mis Compras</a>
+                        <a class="px-3 py-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition" href="{% url 'watch_list' %}">Favoritos</a>
                         {% endif %}
 
                         {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}

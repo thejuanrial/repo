@@ -1,186 +1,255 @@
-{% extends "auctions/layout.html" %} {% block body %} {% load custom_filters %}
-<!-- component -->
-<section class="min-h-[100vh] w-[100vw] pb-12vh bg-gray-900 pt-[12vh]">
+{% extends "auctions/layout.html" %}
+{% load custom_filters %}
 
-    {% if error_message %}
-    <div
-      id="error-alert"
-      class="flex bg-blue-100 rounded-lg p-4 mb-4 text-sm text-blue-700"
-      role="alert"
-    >
-      <svg
-        class="w-5 h-5 inline mr-3"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-          clip-rule="evenodd"
-        ></path>
-      </svg>
-      <div>
-        <span id="error-message" class="font-medium">{{ error_message }}</span> Puje mas alto que el precio actual! <span id="countdown">30</span>
-      </div>
-    </div>
-    {% endif %}
+{% block body %}
+<section class="min-h-screen bg-neutral-50 dark:bg-[#0b0f17] text-neutral-900 dark:text-neutral-100 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto space-y-8">
 
-    <div class="items-start justify-center px-4 py-12 md:flex md:px-6 2xl:px-20">
-    
-    {% if listing.image %}
-      <div class="hidden w-80 md:block lg:w-2/5 xl:w-2/6">
-        <img class="w-full" alt="image of a girl posing" src="/media/{{ listing.image }}" />
-      </div>
-      <div class="md:hidden">
-        <img class="w-full" alt="image of a girl posing" src="/media/{{ listing.image }}" />
-      </div>
-    {% endif %}
-      <div class="mt-6 md:ml-6 md:mt-0 md:w-1/2 lg:ml-8 xl:w-2/5">
-        <div class="border-b border-gray-200 pb-6">
-          <p class="text-sm leading-none text-gray-600 dark:text-gray-300">Categoria : {{ listing.category }}</p>
-          <h1 class="mt-2 text-xl font-semibold leading-7 text-gray-800 lg:text-2xl lg:leading-6 dark:text-white">{{ listing.title }}</h1>
-        </div>
-        <div class="flex flex-col gap-2 border-b border-gray-200 py-4 text-white">
-          <strong class="text-lg">Descripcion del Articulo</strong>
-          <p class=" my-1" >{{ listing.description }}</p>
-          <p class="text-lg my-1" ><strong>Propietario: </strong>{{ listing.user }}</p>
-  
-        </div>
-  
-        <div class="flex flex-col sm:flex-row justify-around gap-4 border-b border-gray-700 py-6 text-gray-50 px-4">
-          <div class="flex justify-center text-center flex-col flex-1 rounded-xl p-4 border border-gray-700 bg-gray-800 shadow-md">
-            <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Precio Inicial</span>
-            <strong class="text-blue-400 text-xl font-extrabold">${{ listing.starting_value|format_usd }} USD</strong>
-            {% if site_config.show_currency_conversion %}
-            <div class="text-xs text-gray-300 mt-1 font-medium">
-                <span class="text-emerald-400 font-semibold">Bs. {{ listing.starting_value|to_bs }}</span> | <span>&euro; {{ listing.starting_value|to_eur }}</span>
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center text-xs text-neutral-500 dark:text-neutral-400 space-x-2">
+            <a href="{% url 'index' %}" class="hover:underline">Inicio</a>
+            <span>&rsaquo;</span>
+            <a href="{% url 'category' listing.category %}" class="hover:underline">{{ listing.category }}</a>
+            <span>&rsaquo;</span>
+            <span class="text-neutral-800 dark:text-neutral-200 font-medium truncate max-w-xs">{{ listing.title }}</span>
+        </nav>
+
+        <!-- Mensajes del Sistema -->
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl text-sm font-medium {% if message.tags == 'error' %}bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800{% else %}bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800{% endif %}">
+                {{ message }}
             </div>
-            {% endif %}
-          </div>
-
-          <div class="flex justify-center text-center flex-col flex-1 rounded-xl p-4 border border-pink-900/50 bg-gray-800 shadow-md">
-            <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Puja Actual</span>
-            <strong class="text-pink-500 text-2xl font-extrabold">${{ current_bid|format_usd }} USD</strong>
-            {% if site_config.show_currency_conversion %}
-            <div class="text-xs text-gray-300 mt-1 font-medium">
-                <span class="text-emerald-400 font-bold text-sm">Bs. {{ current_bid|to_bs }}</span> | <span>&euro; {{ current_bid|to_eur }}</span>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-
-        <div class="m-6 text-center">
-          <p class="text-white text-xl">Mayor Pujador Actual: {% if highest_bidder %} <span class="font-bold text-emerald-400">{{highest_bidder}}</span> {% else %} <span class="text-gray-400">¡Nadie ha pujado aún!</span> {% endif %}</p>
-        </div>
-
-        {% if not user_authenticated %}
-        <div class="m-6 text-center">
-          <p class="text-white text-lg">Inicie sesión para realizar una puja</p>
-          <a href="{% url 'login' %}" class="mt-2 inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm">Iniciar Sesión</a>
+            {% endfor %}
         </div>
         {% endif %}
-        {% if owner and listing.auction_active %}
-        <div class="flex flex-col gap-4 my-4 items-center">
-          <form action="{% url 'close_auction' listing.id %}" method="post" class="">
-            {% csrf_token %}
-            <button class="h-12 min-w-[8rem] rounded-lg border-2 border-red-600 bg-red-500 text-red-50 shadow-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-600">
-              Cerrar Subasta
-            </button>
-          </form>
+
+        <!-- Ficha Principal del Producto (2 Columnas) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-white dark:bg-[#0f141f] border border-neutral-200/80 dark:border-neutral-800 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-sm">
+            
+            <!-- Columna Izquierda: Imagen del Producto -->
+            <div class="lg:col-span-6 flex flex-col items-center">
+                <div class="relative w-full aspect-square rounded-2xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-200/70 dark:border-neutral-800 flex items-center justify-center">
+                    {% if listing.image %}
+                        <img src="/media/{{ listing.image }}" alt="{{ listing.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="flex flex-col items-center justify-center text-neutral-400 text-sm gap-2">
+                            <svg class="w-12 h-12 stroke-current opacity-40" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>Sin imagen disponible</span>
+                        </div>
+                    {% endif %}
+
+                    <!-- Estado Badge -->
+                    <div class="absolute top-3.5 left-3.5">
+                        {% if listing.auction_active %}
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-xs shadow-xs">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                            Disponible
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-neutral-900/90 dark:bg-rose-900/90 text-white backdrop-blur-xs shadow-xs">
+                            Vendido / No disponible
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Botón de Favoritos bajo la imagen -->
+                {% if user_authenticated and not owner %}
+                <div class="w-full mt-4">
+                    <form action="{% url 'watch' listing.id %}" method="post">
+                        {% csrf_token %}
+                        {% if watch %}
+                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-semibold flex items-center justify-center gap-2 transition">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                            <span>Quitar de Favoritos</span>
+                        </button>
+                        {% else %}
+                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-semibold flex items-center justify-center gap-2 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <span>Guardar en Favoritos</span>
+                        </button>
+                        {% endif %}
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Columna Derecha: Información del Producto y Compra -->
+            <div class="lg:col-span-6 flex flex-col justify-between space-y-6">
+                <div class="space-y-4">
+                    <div>
+                        <a href="{% url 'category' listing.category %}" class="inline-block px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition">
+                            {{ listing.category }}
+                        </a>
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-neutral-950 dark:text-white mt-2 leading-tight">
+                            {{ listing.title }}
+                        </h1>
+                        <p class="text-xs text-neutral-400 mt-1">Publicado el {{ listing.created_at|date:"d M, Y" }}</p>
+                    </div>
+
+                    <!-- Tarjeta de Precio -->
+                    <div class="bg-neutral-50 dark:bg-neutral-900/80 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 space-y-3">
+                        <span class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold block">Precio de Venta</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl sm:text-4xl font-extrabold text-neutral-950 dark:text-white tracking-tight">
+                                ${{ listing.starting_value|format_usd }}
+                            </span>
+                            <span class="text-sm font-semibold text-neutral-500">USD</span>
+                        </div>
+
+                        {% if site_config.show_currency_conversion %}
+                        <div class="pt-2 border-t border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono text-neutral-600 dark:text-neutral-300">
+                            <div>
+                                <span class="text-neutral-400 font-sans">Bolívares:</span>
+                                <strong class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">Bs. {{ listing.starting_value|to_bs }}</strong>
+                            </div>
+                            <span class="text-neutral-300 dark:text-neutral-700 hidden sm:inline">&bull;</span>
+                            <div>
+                                <span class="text-neutral-400 font-sans">Euros:</span>
+                                <strong class="text-neutral-800 dark:text-neutral-200 font-semibold font-mono">&euro; {{ listing.starting_value|to_eur }}</strong>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Datos del Vendedor -->
+                    <div class="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs">
+                        <div class="w-9 h-9 rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold flex items-center justify-center shrink-0">
+                            {{ listing.user.username|make_list|first|upper }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-semibold text-neutral-900 dark:text-white truncate">Vendido por: {{ listing.user.username }}</p>
+                            {% if listing.user.address %}
+                                <p class="text-neutral-500 dark:text-neutral-400 truncate">Ubicación: {{ listing.user.address }}</p>
+                            {% else %}
+                                <p class="text-neutral-500 dark:text-neutral-400 truncate">Vendedor verificado en la plataforma</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Descripción del Producto -->
+                    <div class="space-y-2">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-400">Descripción</h3>
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line">
+                            {{ listing.description }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Acciones de Compra y Gestión -->
+                <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
+                    {% if listing.auction_active %}
+                        {% if user_authenticated %}
+                            {% if not owner %}
+                                <!-- Botón Comprar Ahora para Compradores -->
+                                <form action="{% url 'bid' listing.id %}" method="post" onsubmit="return confirm('¿Confirmas la compra inmediata de {{ listing.title|escapejs }} por ${{ listing.starting_value }} USD?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                        <span>Comprar Ahora (${{ listing.starting_value|format_usd }} USD)</span>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <!-- Opciones del Propietario / Vendedor -->
+                                <div class="p-4 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 border border-neutral-200 dark:border-neutral-700 space-y-3">
+                                    <p class="text-xs text-neutral-600 dark:text-neutral-300 font-medium">Eres el propietario de este producto.</p>
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <form action="{% url 'close_auction' listing.id %}" method="post" class="flex-1">
+                                            {% csrf_token %}
+                                            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition">
+                                                Pausar / Marcar como Vendido
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <!-- Usuario no autenticado -->
+                            <div class="text-center p-4 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 border border-neutral-200 dark:border-neutral-700 space-y-2">
+                                <p class="text-xs text-neutral-600 dark:text-neutral-300">Inicie sesión para adquirir este producto</p>
+                                <a href="{% url 'login' %}" class="inline-block w-full py-3 px-6 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-semibold transition shadow-sm">
+                                    Iniciar Sesión para Comprar
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Producto Vendido o Cerrado -->
+                        <div class="p-5 rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-center space-y-2">
+                            <span class="inline-block text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                                Producto No Disponible
+                            </span>
+                            {% if listing.winner %}
+                                <p class="text-sm font-semibold text-neutral-900 dark:text-white">
+                                    Vendido a: <span class="text-blue-600 dark:text-blue-400">{{ listing.winner.username }}</span>
+                                </p>
+                            {% endif %}
+                            {% if owner %}
+                                <form action="{% url 'close_auction' listing.id %}" method="post" class="pt-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">
+                                        Reactivar Producto en Venta
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
         </div>
-        {% endif %}
-        {% if not owner and  user_authenticated %}
-          {% if active %}
-            <div class="flex flex-col gap-4 my-4 items-center">
-              <!-- Input: Designation [h-12] & min-w-[12rem] -->
-              <form action="{% url 'bid' listing.id %}" method="post" class="flex flex-col sm:flex-row items-center gap-3">
+
+        <!-- Sección de Preguntas y Comentarios -->
+        <div class="bg-white dark:bg-[#0f141f] border border-neutral-200/80 dark:border-neutral-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="border-b border-neutral-200 dark:border-neutral-800 pb-4">
+                <h2 class="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                    Preguntas y Comentarios sobre el Producto
+                </h2>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    Consulte directamente al vendedor sobre dudas, envíos o detalles del artículo.
+                </p>
+            </div>
+
+            <!-- Formulario de Pregunta -->
+            {% if user_authenticated %}
+            <form action="{% url 'comment' listing.id %}" method="post" class="space-y-3">
                 {% csrf_token %}
                 <div class="relative">
-                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">$</span>
-                  <input class="h-12 pl-8 pr-4 rounded-lg border-2 border-emerald-500 text-gray-900 font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-600" 
-                  placeholder="Monto en USD"
-                  name="value" type="number" step="0.01" required
-                  id="bid-input"
-                  />
+                    <textarea name="comment" rows="3" required placeholder="Escriba su pregunta o mensaje al vendedor..." class="w-full p-3.5 rounded-2xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
                 </div>
-                <button type="submit" class="h-12 px-8 rounded-lg font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg transition-colors">
-                  Enviar Puja
-                </button>
-              </form>
-              {% if site_config.show_currency_conversion %}
-              <div class="text-xs text-gray-300">
-                Tasas de referencia: 1 $ = Bs. {{ site_config.usd_to_bs_rate }} &bull; 1 &euro; = Bs. {{ site_config.eur_to_bs_rate }}
-              </div>
-              {% endif %}
-              {% if user_authenticated %}
-                <form action="{% url 'watch' listing.id %}" method="post">
-                    {% csrf_token %}
-                  {% if watch %}
-
-                    <button class="h-12 min-w-[8rem] rounded-lg border-2 border-red-600 bg-red-500 text-red-50 shadow-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-600">Quitar de<br>Seguimiento</button>
-
-                  {% else %}
-                  
-                    <button class="h-12 min-w-[8rem] rounded-lg border-2 border-cyan-600 bg-cyan-500 text-emerald-50 shadow-lg hover:bg-cyan-600 focus:outline-none focus:ring focus:ring-blue-600">Agregar a<br>Seguimiento</button>
-                  
-                  {% endif %}
-                </form>
-              {% endif %}
+                <div class="flex justify-end">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 transition shadow-sm">
+                        Enviar Pregunta
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <div class="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500 text-center">
+                <a href="{% url 'login' %}" class="font-semibold text-blue-600 dark:text-blue-400 underline">Inicie sesión</a> para formular una pregunta al vendedor.
             </div>
-          {% else %}
-          <p>Articulo Expirado</p>
-          {% endif %}
-        {% endif %}
+            {% endif %}
 
-        {% if user_authenticated %}
-      
-        <div class="flex flex-col mt-4">
-            <h4 class="text-white text-center text-2xl mt-4" >Seccion de Comentarios</h4>
-            <div>
-                {% for comment in comments %}
-                <div class="m-4 text-white">
-                    <p>{{comment.user}}</p>
-                    <div class="rounded-xl border-2 border-sky-500 p-2 text-white">{{comment.comment}}</div>
+            <!-- Lista de Preguntas / Comentarios -->
+            <div class="space-y-3 pt-2">
+                {% for c in comments %}
+                <div class="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-200/70 dark:border-neutral-800/80 space-y-1.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-neutral-900 dark:text-white">{{ c.user.username }}</span>
+                        <span class="text-[11px] text-neutral-400">{{ c.created_at|date:"d M, Y H:i" }}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                        {{ c.comment }}
+                    </p>
                 </div>
+                {% empty %}
+                <p class="text-xs text-neutral-400 text-center py-6">
+                    Aún no hay preguntas registradas. ¡Sé el primero en consultar!
+                </p>
                 {% endfor %}
-
-                <div>
-                    <form action="{% url 'comment' listing.id %}" method="post">
-                        {% csrf_token %}
-                        <label for="chat" class="sr-only">Tu Comentario</label>
-                        <div class="flex items-center py-2 px-3 bg-gray-50 rounded-lg bg-transparent">
-                            <input id="comment" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Comentario ..." type="Text" name="comment" required/>
-                                <button type="submit" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                                <svg class="w-6 h-6 rotate-90" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
-                            </button>
-                        </div>
-                      </form>
-                </div>
             </div>
         </div>
-    {% endif %}
+
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          var remainingTime = 30;
-          var countdownElement = document.getElementById('countdown');
-          var countdownInterval = setInterval(function() {
-            remainingTime--;
-            countdownElement.textContent = remainingTime;
-            if (remainingTime <= 0) {
-              clearInterval(countdownInterval);
-              var errorAlert = document.getElementById('error-alert');
-              if (errorAlert) {
-                errorAlert.classList.add('hidden');
-              }
-            }
-          }, 1000);
-        });
-    </script>
-      
 </section>
-
-
 {% endblock %}

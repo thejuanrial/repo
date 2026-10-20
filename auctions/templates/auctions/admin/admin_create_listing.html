@@ -5,11 +5,11 @@
     <!-- Encabezado de Página -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Crear Nueva Subasta</h1>
-            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Publique una subasta oficial administrada directamente desde el panel</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Publicar Nuevo Producto</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Publique un producto oficial administrado directamente desde el panel</p>
         </div>
         <a href="{% url 'manage_listings' %}" class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition">
-            &larr; Volver a Subastas
+            &larr; Volver a Productos
         </a>
     </div>
 
@@ -19,7 +19,7 @@
             {% csrf_token %}
 
             <div>
-                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título del Artículo *</label>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título del Producto *</label>
                 {{ form.title }}
             </div>
 
@@ -29,7 +29,7 @@
                     {{ form.category }}
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Valor Inicial ({{ site_config.currency_symbol }}) *</label>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Precio de Venta ({{ site_config.currency_symbol }}) *</label>
                     {{ form.starting_value }}
                 </div>
             </div>
@@ -40,14 +40,14 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Fotografía o Imagen del Artículo</label>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Fotografía o Imagen del Producto</label>
                 {{ form.image }}
             </div>
 
             <!-- Botones Responsivos -->
             <div class="pt-5 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-3">
                 <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm">
-                    Publicar Subasta
+                    Publicar Producto
                 </button>
                 <a href="{% url 'manage_listings' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
                     Cancelar

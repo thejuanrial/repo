@@ -4,7 +4,7 @@
 {% block body %}
     <div class="bg-gray-100 dark:bg-gray-900 min-h-[100vh] pt-[12vh] pb-12 flex flex-col gap-6 items-center justify-start px-4">
 
-        <h1 class="text-gray-100 text-3xl sm:text-5xl font-bold">Subastas Ganadas</h1>
+        <h1 class="text-gray-900 dark:text-gray-100 text-3xl sm:text-5xl font-bold">Mis Compras</h1>
         
     {% if listings %}
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
@@ -24,7 +24,7 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400">Categoría: {{ listing.category }}</p>
                             
                             <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                                <span class="text-xs text-gray-400 block">Puja Ganadora</span>
+                                <span class="text-xs text-gray-400 block">Precio de Compra</span>
                                 <span class="text-base font-extrabold text-gray-900 dark:text-white">${{ listing.starting_value|format_usd }} USD</span>
                                 {% if site_config.show_currency_conversion %}
                                 <div class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
@@ -34,7 +34,7 @@
                             </div>
 
                             <p class="text-xs text-emerald-600 dark:text-emerald-400 font-bold mt-2 bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg text-center">
-                                ¡Felicidades! Usted ganó esta subasta
+                                Compra realizada con éxito
                             </p>
                         </div>
                     </a>
@@ -45,10 +45,10 @@
     {% else %}
 
         <div class="flex flex-col items-center justify-center my-16 text-center">
-            <h3 class="text-gray-300 text-2xl font-medium"> 
-                Aún no ha ganado ninguna subasta.
+            <h3 class="text-gray-600 dark:text-gray-300 text-2xl font-medium"> 
+                Aún no has realizado ninguna compra.
             </h3>
-            <a href="{% url 'index' %}" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">Explorar Subastas</a>
+            <a href="{% url 'index' %}" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">Explorar Productos</a>
         </div>
 
     {% endif %}

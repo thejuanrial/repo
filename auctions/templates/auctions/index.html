@@ -53,7 +53,7 @@
 
                     <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
                         {% if site_config.hero_cta_text %}
-                        <a href="{{ site_config.hero_cta_url|default:'#subastas' }}" class="w-full sm:w-auto text-center px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-medium rounded-xl transition-all shadow-sm">
+                        <a href="{{ site_config.hero_cta_url|default:'#productos' }}" class="w-full sm:w-auto text-center px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-medium rounded-xl transition-all shadow-sm">
                             {{ site_config.hero_cta_text }}
                         </a>
                         {% endif %}
@@ -96,7 +96,7 @@
 
                 <div class="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
                     {% if site_config.hero_cta_text %}
-                    <a href="{{ site_config.hero_cta_url|default:'#subastas' }}" class="w-full sm:w-auto text-center px-7 py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-medium rounded-xl transition-all shadow-sm">
+                    <a href="{{ site_config.hero_cta_url|default:'#productos' }}" class="w-full sm:w-auto text-center px-7 py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-sm font-medium rounded-xl transition-all shadow-sm">
                         {{ site_config.hero_cta_text }}
                     </a>
                     {% endif %}
@@ -183,12 +183,12 @@
     </div>
     {% endif %}
 
-    <!-- 5. SECCIÓN DE SUBASTAS EN PORTADA (MINIMALISTA) -->
+    <!-- 5. SECCIÓN DE PRODUCTOS EN PORTADA (MINIMALISTA) -->
     {% if site_config.show_listings %}
-    <div id="subastas" class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 max-w-7xl">
+    <div id="productos" class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 max-w-7xl">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-neutral-200/70 dark:border-neutral-800 gap-4">
             <div>
-                <span class="text-xs font-mono uppercase tracking-wider text-neutral-400 block mb-1">Catálogo Activo</span>
+                <span class="text-xs font-mono uppercase tracking-wider text-neutral-400 block mb-1">Catálogo de Productos</span>
                 <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white">
                     {{ site_config.listings_section_title }}
                 </h2>
@@ -200,7 +200,7 @@
             </div>
             <div>
                 <span class="text-xs font-mono px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-                    {{ listings|length }} artículo{{ listings|length|pluralize:"s" }}
+                    {{ listings|length }} producto{{ listings|length|pluralize:"s" }}
                 </span>
             </div>
         </div>
@@ -216,8 +216,8 @@
                         <div class="w-full h-full flex items-center justify-center text-neutral-400 text-xs">Sin imagen disponible</div>
                     {% endif %}
                     
-                    <span class="absolute top-2.5 right-2.5 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md bg-neutral-900/80 dark:bg-white/90 text-white dark:text-neutral-950 backdrop-blur-xs">
-                        Activa
+                    <span class="absolute top-2.5 right-2.5 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md bg-emerald-600 text-white backdrop-blur-xs">
+                        Disponible
                     </span>
                 </a>
 
@@ -236,7 +236,7 @@
 
                     <div class="pt-3.5 border-t border-neutral-100 dark:border-neutral-800/80 mt-4 flex items-end justify-between">
                         <div>
-                            <span class="text-[10px] text-neutral-400 uppercase tracking-wider block">Puja actual</span>
+                            <span class="text-[10px] text-neutral-400 uppercase tracking-wider block">Precio</span>
                             <span class="text-base font-bold text-neutral-900 dark:text-white tracking-tight">
                                 ${{ listing.starting_value|format_usd }} <span class="text-[11px] font-normal text-neutral-400">USD</span>
                             </span>
@@ -249,7 +249,7 @@
                             {% endif %}
                         </div>
                         <a href="{% url 'listing' listing.id %}" class="px-3.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100 text-xs font-medium rounded-lg transition-colors shadow-2xs">
-                            Pujar
+                            Comprar
                         </a>
                     </div>
                 </div>
@@ -258,10 +258,10 @@
         </div>
         {% else %}
         <div class="text-center py-16 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 p-8 max-w-lg mx-auto">
-            <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">No hay subastas activas disponibles.</h3>
-            <p class="text-xs text-neutral-500 mt-1">Publique un nuevo artículo para iniciar las ofertas en la plataforma.</p>
+            <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300">No hay productos disponibles actualmente.</h3>
+            <p class="text-xs text-neutral-500 mt-1">Publique un nuevo producto para comenzar a vender en la plataforma.</p>
             <a href="{% url 'create_listing' %}" class="mt-4 inline-block px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:text-neutral-950 text-xs font-semibold rounded-lg transition">
-                Crear Primera Subasta
+                Publicar Primer Producto
             </a>
         </div>
         {% endif %}

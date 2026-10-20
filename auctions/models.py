@@ -26,7 +26,7 @@ class Category(models.Model):
 class SiteConfiguration(models.Model):
     # --- Configuración General del Sitio ---
     site_name = models.CharField(max_length=128, default='BidBazaar')
-    site_tagline = models.CharField(max_length=256, blank=True, default='Su plataforma de subastas en línea')
+    site_tagline = models.CharField(max_length=256, blank=True, default='Su plataforma de compra y venta en línea')
     currency_symbol = models.CharField(max_length=10, default='$')
     copyright_text = models.CharField(max_length=256, default='Todos los derechos reservados')
     contact_email = models.EmailField(blank=True, default='')
@@ -67,47 +67,47 @@ class SiteConfiguration(models.Model):
 
     # --- Barra de Anuncio Superior ---
     show_announcement = models.BooleanField(default=False)
-    announcement_text = models.CharField(max_length=256, blank=True, default="¡Bienvenido a nuestra plataforma de subastas en vivo!")
+    announcement_text = models.CharField(max_length=256, blank=True, default="¡Bienvenido a nuestra plataforma de compra y venta!")
     announcement_link = models.CharField(max_length=256, blank=True, default="")
 
     # --- Sección Hero (Encabezado Principal) ---
     show_hero = models.BooleanField(default=True)
     hero_title = models.CharField(max_length=256, default='Bienvenido a BidBazaar')
-    hero_subtitle = models.TextField(blank=True, default='Descubra subastas exclusivas de artículos únicos, coleccionables raros y grandes oportunidades cada día.')
+    hero_subtitle = models.TextField(blank=True, default='Descubra artículos únicos, productos de calidad y grandes oportunidades cada día.')
     hero_image = models.ImageField(upload_to='hero/', blank=True, null=True)
-    hero_cta_text = models.CharField(max_length=64, default='Explorar Subastas')
-    hero_cta_url = models.CharField(max_length=128, default='#subastas')
-    hero_secondary_cta_text = models.CharField(max_length=64, default='Crear Subasta')
+    hero_cta_text = models.CharField(max_length=64, default='Explorar Productos')
+    hero_cta_url = models.CharField(max_length=128, default='#productos')
+    hero_secondary_cta_text = models.CharField(max_length=64, default='Vender Producto')
     hero_secondary_cta_url = models.CharField(max_length=128, default='/create_listing/')
 
     # --- Sección de Tarjetas Informativas / Beneficios ---
     show_features = models.BooleanField(default=True)
     features_title = models.CharField(max_length=128, default='¿Por qué elegirnos?')
-    features_subtitle = models.CharField(max_length=256, default='La plataforma más confiable y dinámica para compradores y vendedores')
-    feature_1_title = models.CharField(max_length=128, default='Subastas en Línea')
-    feature_1_desc = models.TextField(default='Sumérjase en un mundo de posibilidades infinitas navegando por nuestra selección curada de artículos únicos.')
+    features_subtitle = models.CharField(max_length=256, default='La plataforma más confiable para comprar y vender')
+    feature_1_title = models.CharField(max_length=128, default='Compra Directa')
+    feature_1_desc = models.TextField(default='Navegue por una selección curada de productos a precios fijos y transparentes.')
     feature_2_title = models.CharField(max_length=128, default='Gran Variedad')
-    feature_2_desc = models.TextField(default='Descubra una amplia variedad de subastas con de todo, desde coleccionables hasta artículos de última generación.')
-    feature_3_title = models.CharField(max_length=128, default='Puja con Confianza')
-    feature_3_desc = models.TextField(default='Priorizamos la transparencia, la integridad y la seguridad. Nuestro sistema garantiza subastas justas y competitivas.')
-    feature_4_title = models.CharField(max_length=128, default='Venda sus Tesoros')
-    feature_4_desc = models.TextField(default='Convierta sus artículos en dinero vendiendo con nosotros. Atraiga compradores potenciales y cierre tratos con facilidad.')
+    feature_2_desc = models.TextField(default='Descubra una amplia variedad de artículos desde tecnología hasta coleccionables y más.')
+    feature_3_title = models.CharField(max_length=128, default='Compra Segura')
+    feature_3_desc = models.TextField(default='Priorizamos la transparencia, la integridad y la seguridad en cada compra y venta.')
+    feature_4_title = models.CharField(max_length=128, default='Venda sus Productos')
+    feature_4_desc = models.TextField(default='Convierta sus artículos en dinero vendiendo con nosotros. Publique sus productos y cierre ventas con facilidad.')
 
     # --- Sección de Categorías en Portada ---
     show_categories_preview = models.BooleanField(default=True)
     categories_section_title = models.CharField(max_length=128, default='Explorar por Categoría')
 
-    # --- Sección de Subastas en Portada ---
+    # --- Sección de Productos en Portada ---
     show_listings = models.BooleanField(default=True)
-    listings_section_title = models.CharField(max_length=128, default='Subastas Recientes')
-    listings_section_subtitle = models.CharField(max_length=256, blank=True, default='Ofertas activas en tiempo real listas para recibir su puja')
+    listings_section_title = models.CharField(max_length=128, default='Productos Destacados')
+    listings_section_subtitle = models.CharField(max_length=256, blank=True, default='Artículos disponibles para compra directa')
     listings_limit = models.IntegerField(default=8)
     listings_order = models.CharField(max_length=32, default='recent')
 
     # --- Banner de Llamado a la Acción (CTA Inferior) ---
     show_cta_banner = models.BooleanField(default=True)
-    cta_banner_title = models.CharField(max_length=256, default='¿Listo para comenzar a pujar o vender?')
-    cta_banner_text = models.TextField(default='Cree su cuenta gratuita en segundos y comience a participar en subastas en tiempo real.')
+    cta_banner_title = models.CharField(max_length=256, default='¿Listo para comenzar a comprar o vender?')
+    cta_banner_text = models.TextField(default='Cree su cuenta gratuita en segundos y comience a comprar y vender con total comodidad.')
     cta_banner_button_text = models.CharField(max_length=64, default='Registrarse Ahora')
     cta_banner_button_url = models.CharField(max_length=128, default='/register/')
 
@@ -140,6 +140,18 @@ class Listing(models.Model):
     image = models.ImageField(null=True, blank=True, upload_to="images/")
     created_at = models.DateTimeField(default=timezone.now)
     
+    @property
+    def price(self):
+        return self.starting_value
+
+    @property
+    def is_available(self):
+        return self.auction_active
+
+    @property
+    def buyer(self):
+        return self.winner
+
     def __str__(self):
         return self.title
     
@@ -153,7 +165,7 @@ class Watch(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchList")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchers")
     def __str__(self):
-        return f"user {self.user} is watching listing {self.listing}"
+        return f"{self.user} tiene en favoritos a {self.listing}"
 
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
@@ -162,7 +174,7 @@ class Bid(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f"{self.user} bid {self.value} on {self.listing}"
+        return f"{self.user} compró {self.listing} por {self.value}"
     
     def save(self, *args, **kwargs):
         if not self.created_at.tzinfo:

@@ -1,15 +1,15 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<section class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col justify-center items-center pt-[12vh] pb-12">
+<section class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col justify-center items-center pt-[12vh] pb-12 px-4">
 
     {% if message %}
     <div
-      class="flex bg-blue-100 rounded-lg p-4 mb-4 text-sm text-blue-700"
+      class="flex bg-blue-100 rounded-lg p-4 mb-4 text-sm text-blue-700 max-w-xl w-full"
       role="alert"
     >
       <svg
-        class="w-5 h-5 inline mr-3"
+        class="w-5 h-5 inline mr-3 shrink-0"
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -26,13 +26,13 @@
     </div>
     {% endif %}
 
-    <h2 class="text-gray-200 text-4xl font-bold mb-4">Crear Publicación</h2>
+    <h2 class="text-gray-900 dark:text-gray-100 text-3xl sm:text-4xl font-bold mb-6 text-center">Publicar Producto en Venta</h2>
 
-    <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data" class="bg-gray-300 gap-2 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-[90%] md:w-[60%]">
+    <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700 shadow-md rounded-2xl p-6 sm:p-8 mb-4 w-full max-w-xl space-y-4">
         {% csrf_token %}
         {{ form.as_p }}
-        <div class="mt-6 flex justify-center items-center">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded" id="submit-button">Publicar Subasta</button>
+        <div class="mt-6 flex justify-center items-center pt-4">
+            <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-sm" id="submit-button">Publicar Producto</button>
         </div>
     </form>
 

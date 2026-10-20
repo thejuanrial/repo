@@ -23,27 +23,17 @@ def index(request):
 
     # Ordenación dinámica según la configuración
     if config.listings_order == 'price_high':
-        listings_list = list(listings_qs)
-        for listing in listings_list:
-            listing.starting_value = get_current_bid_value(listing.id)
-        listings_list.sort(key=lambda x: float(x.starting_value), reverse=True)
+        listings_list = list(listings_qs.order_by('-starting_value'))
     elif config.listings_order == 'price_low':
-        listings_list = list(listings_qs)
-        for listing in listings_list:
-            listing.starting_value = get_current_bid_value(listing.id)
-        listings_list.sort(key=lambda x: float(x.starting_value))
+        listings_list = list(listings_qs.order_by('starting_value'))
     elif config.listings_order == 'most_bids':
         listings_qs = listings_qs.annotate(num_bids=Count('bids')).order_by('-num_bids')
         listings_list = list(listings_qs)
-        for listing in listings_list:
-            listing.starting_value = get_current_bid_value(listing.id)
     else:  # 'recent' por defecto
         listings_qs = listings_qs.order_by('-created_at')
         listings_list = list(listings_qs)
-        for listing in listings_list:
-            listing.starting_value = get_current_bid_value(listing.id)
 
-    # Límite de subastas a mostrar
+    # Límite de productos a mostrar
     if config.listings_limit and config.listings_limit > 0:
         listings_list = listings_list[:config.listings_limit]
 
@@ -280,7 +270,7 @@ def create_listing(request):
                 image=form.cleaned_data["image"]
             )
             listing.save()
-            message = f"Su publicación '{listing.title}' fue creada exitosamente."
+            message = f"Su producto '{listing.title}' fue publicado exitosamente."
             messages.success(request, message)
             return redirect("index")
         else:
@@ -289,113 +279,107 @@ def create_listing(request):
     return render(request, "auctions/createListing.html", {'form': ListingForm})
 
 def view_listing(request, listing_id, error_message=False):
-    listing = Listing.objects.get(pk=listing_id)
+    listing = get_object_or_404(Listing, pk=listing_id)
     isActive = listing.auction_active
-    current_bid = get_current_bid_value(listing_id)
-    highest_bidder = get_current_bidder(listing_id)
-    # listing.remaining_time = max(listing.end_time - timezone.now(), timedelta(seconds=0))
 
     user_authenticated = request.user.is_authenticated
-    if (user_authenticated):    
+    if user_authenticated:    
         watchExists = Watch.objects.filter(user=request.user, listing=listing_id).exists()
         isOwner = listing.user == request.user
     else:
-        watchExists=False
+        watchExists = False
         isOwner = False
 
-    if not(error_message):
-        return render(request, "auctions/listingView.html", {
-            'user_authenticated': user_authenticated,
-            'listing': listing,
-            'watch': watchExists,
-            'current_bid': current_bid,
-            'owner': isOwner,
-            'active': isActive,
-            'comments': Comment.objects.filter(listing=listing),
-            'highest_bidder': highest_bidder,
-            # 'remaining_time': listing.remaining_time,
-        })
-    else:
-        return render(request, "auctions/listingView.html", {
-            'user_authenticated': user_authenticated,
-            'listing': listing,
-            'watch': watchExists,
-            'current_bid': current_bid,
-            'owner': isOwner,
-            'active': isActive,
-            'comments': Comment.objects.filter(listing=listing),
-            'highest_bidder': highest_bidder,
-            # 'remaining_time': listing.remaining_time,
-            'error_message': 'Su puja fue demasiado baja',
-        })
+    return render(request, "auctions/listingView.html", {
+        'user_authenticated': user_authenticated,
+        'listing': listing,
+        'watch': watchExists,
+        'current_price': listing.starting_value,
+        'owner': isOwner,
+        'active': isActive,
+        'buyer': listing.winner,
+        'comments': Comment.objects.filter(listing=listing).order_by('-created_at'),
+        'error_message': error_message,
+    })
 
 @login_required(redirect_field_name='index')
 def watch(request, listing_id):
-    # if the user is not watching the item it will add a watch to the item. If the user is already watching the item it will delete the watch from the item.
+    # Agregar o remover de lista de favoritos
     watch = Watch.objects.filter(user=request.user, listing_id=listing_id)
     if watch.exists():
         watch.delete()
+        messages.info(request, "Producto removido de sus favoritos.")
     else:
         watch = Watch(user=request.user, listing_id=listing_id)
         watch.save()
+        messages.success(request, "Producto añadido a sus favoritos.")
     
     return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 @login_required(redirect_field_name='index')
 def bid(request, listing_id):
-    current_bid = get_current_bid_value(listing_id)
+    listing = get_object_or_404(Listing, pk=listing_id)
 
-    if float(request.POST["value"]) > current_bid:
-        newBid = Bid(user=request.user, listing_id=listing_id, value=request.POST["value"])
-        newBid.save()
-        return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+    if not listing.auction_active:
+        messages.error(request, "Este producto ya no está disponible o ha sido vendido.")
+        return redirect("listing", listing_id=listing.id)
 
-    else:
-        return view_listing(request, listing_id, error_message=True)
+    if listing.user == request.user:
+        messages.error(request, "No puedes comprar un producto que tú mismo publicaste.")
+        return redirect("listing", listing_id=listing.id)
+
+    if request.method == "POST":
+        # Ejecutar compra directa inmediata
+        listing.auction_active = False
+        listing.winner = request.user
+        listing.save()
+
+        # Registrar transacción de compra
+        new_purchase = Bid(user=request.user, listing=listing, value=listing.starting_value)
+        new_purchase.save()
+
+        messages.success(request, f"¡Felicitaciones! Has comprado exitosamente '{listing.title}'.")
+        return redirect("won_listings")
+
+    return redirect("listing", listing_id=listing.id)
 
 @login_required(redirect_field_name='index')
 def close_auction(request, listing_id):
-    # TODO if no one has bid
-    listing = Listing.objects.get(id=listing_id)
-    listing.auction_active = False
+    listing = get_object_or_404(Listing, pk=listing_id)
+    if listing.user != request.user and not (request.user.is_superuser or request.user.is_staff):
+        return HttpResponseForbidden("No tiene permiso para modificar esta publicación.")
 
-    # set the highest bid to the winner of the bid
-    bids = Bid.objects.filter(listing_id=listing_id)
-    if bids.exists():
-        highest_bid = bids.order_by('-value')[0]
-        listing.winner = highest_bid.user
-    else:
-        listing.winner = None
+    if request.method == "POST":
+        if listing.auction_active:
+            listing.auction_active = False
+            listing.save()
+            messages.info(request, f"El producto '{listing.title}' ha sido marcado como no disponible.")
+        else:
+            listing.auction_active = True
+            listing.save()
+            messages.success(request, f"El producto '{listing.title}' ha sido reactivado como disponible.")
 
-    listing.save()
-    return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
+    return redirect("listing", listing_id=listing.id)
 
 @login_required(redirect_field_name='index')
 def comment(request, listing_id):
-    comment = request.POST['comment']
-    comment = Comment(user=request.user, listing_id = listing_id, comment=comment)
-    comment.save()
+    comment_text = request.POST.get('comment', '').strip()
+    if comment_text:
+        comment = Comment(user=request.user, listing_id=listing_id, comment=comment_text)
+        comment.save()
+        messages.success(request, "Tu pregunta o comentario fue enviado exitosamente.")
     return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
 
 @login_required(redirect_field_name='index')
 def your_listings(request):
-    listings = Listing.objects.filter(user=request.user)
-    
-    for listing in listings:
-        listing.starting_value = get_current_bid_value(listing.id)
-    
+    listings = Listing.objects.filter(user=request.user).order_by('-created_at')
     return render(request, "auctions/profile/yourListings.html", {
         'listings': listings,
     })
 
 @login_required(redirect_field_name='index')
 def won_listings(request):
-    
-    listings = Listing.objects.filter(winner=request.user)
-    
-    for listing in listings:
-        listing.starting_value = get_current_bid_value(listing.id)
-    
+    listings = Listing.objects.filter(winner=request.user).order_by('-created_at')
     return render(request, "auctions/profile/wonListings.html", {
         'listings': listings,
     })
@@ -403,29 +387,22 @@ def won_listings(request):
 @login_required(redirect_field_name='index')
 def watch_list(request):
     watched_listing_ids = Watch.objects.filter(user=request.user).values_list('listing_id', flat=True)
-    listings = Listing.objects.filter(id__in=watched_listing_ids)
+    listings = Listing.objects.filter(id__in=watched_listing_ids).order_by('-created_at')
     return render(request, "auctions/profile/watchList.html", {
         'listings': listings
     })
 
 def categories(request):
     categories = Listing.objects.values_list('category', flat=True).distinct().order_by('category')
-
     return render(request, "auctions/categories.html", {
         'categories': list(categories)
     })
 
 def category(request, category):
-    active_listings = Listing.objects.filter(category=category, auction_active=True)
-    inactive_listings = Listing.objects.filter(category=category, auction_active=False)
+    active_listings = Listing.objects.filter(category=category, auction_active=True).order_by('-created_at')
+    inactive_listings = Listing.objects.filter(category=category, auction_active=False).order_by('-created_at')
     
-    for listing in active_listings:
-        listing.starting_value = get_current_bid_value(listing.id)
-    
-    for listing in inactive_listings:
-        listing.starting_value = get_current_bid_value(listing.id)
-    
-    return render(request, "auctions/category.html",{
+    return render(request, "auctions/category.html", {
         'category': category,
         'active_listings': active_listings,
         'inactive_listings': inactive_listings,
@@ -769,7 +746,7 @@ def admin_create_listing(request):
             listing = form.save(commit=False)
             listing.user = request.user
             listing.save()
-            messages.success(request, f'Publicación "{listing.title}" creada exitosamente.')
+            messages.success(request, f'Producto "{listing.title}" publicado exitosamente.')
             return redirect('manage_listings')
         return render(request, 'auctions/admin/admin_create_listing.html', {'form': form})
     return render(request, 'auctions/admin/admin_create_listing.html', {'form': ListingForm()})
@@ -786,7 +763,7 @@ def admin_edit_listing(request, listing_id):
         if 'image' in request.FILES:
             listing.image = request.FILES['image']
         listing.save()
-        messages.success(request, f'Publicación "{listing.title}" actualizada exitosamente.')
+        messages.success(request, f'Producto "{listing.title}" actualizado exitosamente.')
         return redirect('manage_listings')
     categories = Category.objects.filter(is_active=True)
     return render(request, 'auctions/admin/admin_edit_listing.html', {'listing': listing, 'categories': categories})
@@ -798,7 +775,7 @@ def reactivate_listing(request, listing_id):
         listing.auction_active = True
         listing.winner = None
         listing.save()
-        messages.success(request, f'Publicación "{listing.title}" reactivada exitosamente.')
+        messages.success(request, f'Producto "{listing.title}" reactivado exitosamente.')
     return redirect('manage_listings')
 
 
@@ -828,7 +805,7 @@ def admin_delete_comment(request, comment_id):
 
 
 # ============================================================
-# BIDS MANAGEMENT
+# BIDS / PURCHASES MANAGEMENT
 # ============================================================
 
 @user_passes_test(is_superuser, login_url='/forbidden/')
@@ -847,7 +824,7 @@ def admin_delete_bid(request, bid_id):
     if request.method == 'POST':
         bid_obj = get_object_or_404(Bid, pk=bid_id)
         bid_obj.delete()
-        messages.success(request, 'Puja eliminada exitosamente.')
+        messages.success(request, 'Registro de compra eliminado exitosamente.')
     return redirect('manage_bids')
 
 
@@ -932,7 +909,7 @@ def admin_customize_home(request):
         config.show_categories_preview = request.POST.get('show_categories_preview') == 'on'
         config.categories_section_title = request.POST.get('categories_section_title', config.categories_section_title).strip()
 
-        # Sección de Subastas
+        # Sección de Productos
         config.show_listings = request.POST.get('show_listings') == 'on'
         config.listings_section_title = request.POST.get('listings_section_title', config.listings_section_title).strip()
         config.listings_section_subtitle = request.POST.get('listings_section_subtitle', config.listings_section_subtitle).strip()

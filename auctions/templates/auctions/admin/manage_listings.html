@@ -6,13 +6,13 @@
     <!-- Encabezado de Página -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Gestión de Subastas</h1>
-            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Supervise, edite y modifique el estado de las publicaciones activas o finalizadas</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Gestión de Productos</h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">Supervise, edite y modifique el estado de los productos en venta o vendidos</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{% url 'admin_create_listing' %}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm w-full sm:w-auto">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                <span>Nueva Subasta</span>
+                <span>Nuevo Producto</span>
             </a>
         </div>
     </div>
@@ -21,7 +21,7 @@
     <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-5 shadow-xs">
         <form method="GET" action="{% url 'manage_listings' %}" class="flex flex-col sm:flex-row gap-2.5 w-full max-w-xl">
             <div class="relative flex-1">
-                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar subastas por título o descripción..." class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar productos por título o descripción..." class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <svg class="w-4 h-4 text-neutral-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
             <div class="flex gap-2">
@@ -41,7 +41,7 @@
     <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
         <div class="flex items-center justify-between">
             <h2 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">
-                Todas las Subastas <span class="text-xs font-normal text-neutral-500 dark:text-neutral-400">({{ listings|length }})</span>
+                Todos los Productos <span class="text-xs font-normal text-neutral-500 dark:text-neutral-400">({{ listings|length }})</span>
             </h2>
         </div>
 
@@ -52,7 +52,7 @@
                     <tr>
                         <th class="px-4 py-3">Título</th>
                         <th class="px-4 py-3">Categoría</th>
-                        <th class="px-4 py-3 text-center">Valor Base</th>
+                        <th class="px-4 py-3 text-center">Precio</th>
                         <th class="px-4 py-3 text-center">Estado</th>
                         <th class="px-4 py-3 text-left">Propietario</th>
                         <th class="px-4 py-3 text-center">Acciones</th>
@@ -77,9 +77,9 @@
                         </td>
                         <td class="px-4 py-3 text-center">
                             {% if listing.auction_active %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Activa</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Disponible</span>
                             {% else %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">Cerrada</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">Vendido / Inactivo</span>
                             {% endif %}
                         </td>
                         <td class="px-4 py-3 text-neutral-600 dark:text-neutral-300">
@@ -105,7 +105,7 @@
                                         </button>
                                     </form>
                                 {% endif %}
-                                <form action="{% url 'delete_listing' listing.id %}" method="post" class="inline" onsubmit="return confirm('Eliminar esta subasta permanentemente?');">
+                                <form action="{% url 'delete_listing' listing.id %}" method="post" class="inline" onsubmit="return confirm('Eliminar este producto permanentemente?');">
                                     {% csrf_token %}
                                     <button type="submit" class="px-2.5 py-1 rounded-lg bg-red-50 dark:bg-red-950/50 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 text-xs font-medium transition">
                                         Eliminar
@@ -117,7 +117,7 @@
                     {% empty %}
                     <tr>
                         <td colspan="6" class="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400 text-sm">
-                            No se encontraron subastas registradas.
+                            No se encontraron productos registrados.
                         </td>
                     </tr>
                     {% endfor %}

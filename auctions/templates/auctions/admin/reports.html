@@ -194,7 +194,7 @@
         <div class="bg-white border rounded-lg p-4 shadow-lg">
 
             <div class="my-4">
-                <h1 class="text-center text-3xl font-bold">Subastas</h1>
+                <h1 class="text-center text-3xl font-bold">Productos</h1>
             </div>
         
             <div class="my-4">
@@ -202,13 +202,13 @@
                 <div class="my-4 border border-gray-300 rounded-md p-3">
                     <!-- Day-wise Listings Table -->
                     <div class="my-4">
-                        <h2 class="text-lg text-center font-semibold mb-2">Subastas Creadas por Día</h2>
+                        <h2 class="text-lg text-center font-semibold mb-2">Productos Publicados por Día</h2>
                         <div class="overflow-x-auto">
                             <table class="table-auto w-full text-sm">
                                 <thead class="bg-gray-100">
                                     <tr>
                                         <th class="px-4 py-2 text-left">Fecha</th>
-                                        <th class="px-4 py-2 text-center">Total de Subastas</th>
+                                        <th class="px-4 py-2 text-center">Total de Productos</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -228,20 +228,20 @@
                     </div>
 
                     <!-- Day-wise Listings Chart -->
-                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Subastas por Día</h2>
+                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Productos por Día</h2>
                     <canvas id="day-wise-chart" width="400" height="200"></canvas>
                 </div>
 
                 <div class="my-4 border border-gray-300 rounded-md p-3">
                     <!-- Month-wise Listings Table -->
                     <div class="my-4">
-                        <h2 class="text-lg text-center font-semibold mb-2">Subastas Creadas por Mes</h2>
+                        <h2 class="text-lg text-center font-semibold mb-2">Productos Publicados por Mes</h2>
                         <div class="overflow-x-auto">
                             <table class="table-auto w-full text-sm">
                                 <thead class="bg-gray-100">
                                     <tr>
                                         <th class="px-4 py-2 text-left">Mes</th>
-                                        <th class="px-4 py-2 text-center">Total de Subastas</th>
+                                        <th class="px-4 py-2 text-center">Total de Productos</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -261,7 +261,7 @@
                     </div>
 
                     <!-- Month-wise Listings Chart -->
-                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Subastas por Mes</h2>
+                    <h2 class="text-lg text-center font-semibold mb-2">Gráfico de Productos por Mes</h2>
                     <canvas id="month-wise-chart" width="400" height="200"></canvas>
                 </div>
             </div>
@@ -278,7 +278,7 @@
                             {% endfor %}
                         ],
                         datasets: [{
-                            label: 'Total de Subastas',
+                            label: 'Total de Productos',
                             data: [
                                 {% for day in day_wise_listings %}
                                     {{ day.count }},
@@ -311,7 +311,7 @@
                             {% endfor %}
                         ],
                         datasets: [{
-                            label: 'Total de Subastas',
+                            label: 'Total de Productos',
                             data: [
                                 {% for month in month_wise_listings %}
                                     {{ month.count }},
@@ -340,13 +340,13 @@
         <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-xs">
             <!-- Category Reports Table -->
             <div class="my-4">
-                <h2 class="text-3xl text-center font-bold mb-2">Subastas por Categoría</h2>
+                <h2 class="text-3xl text-center font-bold mb-2">Productos por Categoría</h2>
                 <div class="overflow-x-auto">
                     <table class="table-auto w-full text-sm">
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2 text-left">Categoría</th>
-                                <th class="px-4 py-2 text-center">Total de Subastas</th>
+                                <th class="px-4 py-2 text-center">Total de Productos</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -381,7 +381,7 @@
                             {% endfor %}
                         ],
                         datasets: [{
-                            label: 'Total de Subastas',
+                            label: 'Total de Productos',
                             data: [
                                 {% for data in category_data %}
                                     {{ data.total_listings }},
@@ -409,48 +409,48 @@
         <div class="bg-white border rounded-lg p-4 shadow-lg">
 
             <div class="my-4">
-                <h1 class="text-center text-3xl font-bold">Pujas</h1>
+                <h1 class="text-center text-3xl font-bold">Compras y Actividad</h1>
             </div>
 
             <div class="my-4 space-y-4">
 
                 <div>
-                    <h2 class="text-lg font-semibold mb-2">Artículo con Mayor Cantidad de Pujas</h2>
+                    <h2 class="text-lg font-semibold mb-2">Producto Más Vendido / Solicitado</h2>
                     <div class="bg-gray-50 border rounded-lg p-4 shadow-sm">
                         {% if most_bid_item %}
                             <h3 class="text-lg font-semibold">{{ most_bid_item.title }}</h3>
-                            <p class="text-gray-600">Total de Pujas: <span class="font-bold text-blue-600">{{ most_bid_item.num_bids }}</span></p>
+                            <p class="text-gray-600">Total de Operaciones: <span class="font-bold text-blue-600">{{ most_bid_item.num_bids }}</span></p>
                             <p class="text-gray-600">Categoría: {{ most_bid_item.category }}</p>
                         {% else %}
-                            <p class="text-gray-500">No hay pujas registradas aún.</p>
+                            <p class="text-gray-500">No hay compras registradas aún.</p>
                         {% endif %}
                     </div>
                 </div>
 
                 <div>
-                    <h2 class="text-lg font-semibold mb-2">Artículo con Menor Cantidad de Pujas</h2>
+                    <h2 class="text-lg font-semibold mb-2">Producto Menos Solicitado</h2>
                     <div class="bg-gray-50 border rounded-lg p-4 shadow-sm">
                         {% if least_bid_item %}
                             <h3 class="text-lg font-semibold">{{ least_bid_item.title }}</h3>
-                            <p class="text-gray-600">Total de Pujas: <span class="font-bold text-gray-700">{{ least_bid_item.num_bids }}</span></p>
+                            <p class="text-gray-600">Total de Operaciones: <span class="font-bold text-gray-700">{{ least_bid_item.num_bids }}</span></p>
                             <p class="text-gray-600">Categoría: {{ least_bid_item.category }}</p>
                         {% else %}
-                            <p class="text-gray-500">No hay pujas registradas aún.</p>
+                            <p class="text-gray-500">No hay compras registradas aún.</p>
                         {% endif %}
                     </div>
                 </div>
 
                 <div>
-                    <h2 class="text-lg font-semibold mb-2">Mayores Pujadores</h2>
+                    <h2 class="text-lg font-semibold mb-2">Compradores Frecuentes</h2>
                     <div class="bg-gray-50 border rounded-lg p-4 shadow-sm">
                         <ul class="divide-y divide-gray-200">
                             {% for bidder in top_bidders %}
                                 <li class="py-2 flex justify-between">
                                     <strong>{{ bidder.username }}</strong>
-                                    <span class="text-gray-600">{{ bidder.num_bids }} pujas</span>
+                                    <span class="text-gray-600">{{ bidder.num_bids }} compras</span>
                                 </li>
                             {% empty %}
-                                <li class="py-2 text-gray-500">No hay pujadores registrados aún.</li>
+                                <li class="py-2 text-gray-500">No hay compradores registrados aún.</li>
                             {% endfor %}
                         </ul>
                     </div>

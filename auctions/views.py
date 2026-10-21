@@ -276,7 +276,7 @@ def create_listing(request):
         else:
             return render(request, "auctions/createListing.html", {'form': form})
 
-    return render(request, "auctions/createListing.html", {'form': ListingForm})
+    return render(request, "auctions/createListing.html", {'form': ListingForm()})
 
 def view_listing(request, listing_id, error_message=False):
     listing = get_object_or_404(Listing, pk=listing_id)
@@ -393,17 +393,35 @@ def watch_list(request):
     })
 
 def categories(request):
-    categories = Listing.objects.values_list('category', flat=True).distinct().order_by('category')
+    cats = Category.objects.filter(is_active=True).order_by('name')
+    # Si no hay categorías, sembrar las predeterminadas
+    if not cats.exists():
+        default_categories = ['General', 'Tecnología', 'Moda', 'Hogar', 'Vehículos', 'Coleccionables']
+        for cat_name in default_categories:
+            Category.objects.get_or_create(name=cat_name, defaults={'description': f'Productos de {cat_name}'})
+        cats = Category.objects.filter(is_active=True).order_by('name')
+
+    categories_data = []
+    for c in cats:
+        count = Listing.objects.filter(category__iexact=c.name, auction_active=True).count()
+        categories_data.append({
+            'name': c.name,
+            'description': c.description,
+            'count': count,
+        })
     return render(request, "auctions/categories.html", {
-        'categories': list(categories)
+        'categories': categories_data
     })
 
 def category(request, category):
-    active_listings = Listing.objects.filter(category=category, auction_active=True).order_by('-created_at')
-    inactive_listings = Listing.objects.filter(category=category, auction_active=False).order_by('-created_at')
+    active_listings = Listing.objects.filter(category__iexact=category, auction_active=True).order_by('-created_at')
+    inactive_listings = Listing.objects.filter(category__iexact=category, auction_active=False).order_by('-created_at')
+    category_obj = Category.objects.filter(name__iexact=category).first()
+    category_title = category_obj.name if category_obj else category
     
     return render(request, "auctions/category.html", {
-        'category': category,
+        'category': category_title,
+        'category_obj': category_obj,
         'active_listings': active_listings,
         'inactive_listings': inactive_listings,
     })
@@ -601,22 +619,57 @@ def manage_categories(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         description = request.POST.get('description', '').strip()
-        if name:
-            Category.objects.get_or_create(name=name, defaults={'description': description})
+        if not name:
+            messages.error(request, 'El nombre de la categoría es obligatorio.')
+            return redirect('manage_categories')
+
+        existing = Category.objects.filter(name__iexact=name).first()
+        if existing:
+            if not existing.is_active:
+                existing.is_active = True
+                if description:
+                    existing.description = description
+                existing.save()
+                messages.success(request, f'La categoría "{existing.name}" ha sido reactivada exitosamente.')
+            else:
+                messages.warning(request, f'La categoría "{existing.name}" ya existe en el sistema.')
+        else:
+            Category.objects.create(name=name, description=description, is_active=True)
             messages.success(request, f'Categoría "{name}" creada exitosamente.')
         return redirect('manage_categories')
     
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by('name')
     return render(request, 'auctions/admin/manage_categories.html', {'categories': categories})
 
 @user_passes_test(is_superuser, login_url='/forbidden/')
 def edit_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     if request.method == 'POST':
-        category.name = request.POST.get('name', category.name).strip()
-        category.description = request.POST.get('description', '').strip()
-        category.is_active = request.POST.get('is_active') == 'on'
+        new_name = request.POST.get('name', '').strip()
+        new_description = request.POST.get('description', '').strip()
+        is_active = request.POST.get('is_active') == 'on'
+
+        if not new_name:
+            messages.error(request, 'El nombre de la categoría no puede estar vacío.')
+            return render(request, 'auctions/admin/edit_category.html', {'category': category})
+
+        old_name = category.name
+        conflict = Category.objects.filter(name__iexact=new_name).exclude(pk=category.id).first()
+        if conflict:
+            messages.error(request, f'Ya existe otra categoría registrada con el nombre "{new_name}".')
+            return render(request, 'auctions/admin/edit_category.html', {'category': category})
+
+        category.name = new_name
+        category.description = new_description
+        category.is_active = is_active
         category.save()
+
+        # Sincronizar publicaciones que tenían el nombre antiguo
+        if old_name != new_name:
+            updated_count = Listing.objects.filter(category=old_name).update(category=new_name)
+            if updated_count > 0:
+                messages.info(request, f'Se actualizaron {updated_count} producto(s) al nuevo nombre de categoría "{new_name}".')
+
         messages.success(request, f'Categoría "{category.name}" actualizada exitosamente.')
         return redirect('manage_categories')
     return render(request, 'auctions/admin/edit_category.html', {'category': category})
@@ -625,8 +678,15 @@ def edit_category(request, category_id):
 def delete_category(request, category_id):
     if request.method == 'POST':
         category = get_object_or_404(Category, pk=category_id)
-        messages.success(request, f'Categoría "{category.name}" eliminada exitosamente.')
+        cat_name = category.name
+        # Reasignar productos huérfanos a la categoría 'General'
+        general_cat, _ = Category.objects.get_or_create(name='General', defaults={'description': 'Categoría general'})
+        reassigned = Listing.objects.filter(category=cat_name).update(category=general_cat.name)
         category.delete()
+        if reassigned > 0:
+            messages.success(request, f'Categoría "{cat_name}" eliminada. Se reasignaron {reassigned} producto(s) a la categoría "General".')
+        else:
+            messages.success(request, f'Categoría "{cat_name}" eliminada exitosamente.')
     return redirect('manage_categories')
 
 

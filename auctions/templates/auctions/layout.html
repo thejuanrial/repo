@@ -248,6 +248,20 @@
         </script>
         
         <main class="flex-1">
+        {% if messages %}
+        <div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg px-4 space-y-2 pointer-events-none">
+            {% for message in messages %}
+            <div class="pointer-events-auto flex items-center justify-between p-4 rounded-xl text-xs sm:text-sm font-medium border shadow-lg backdrop-blur-md {% if message.tags == 'error' %}bg-red-50/95 text-red-800 border-red-200 dark:bg-red-950/95 dark:text-red-200 dark:border-red-800{% elif message.tags == 'warning' %}bg-amber-50/95 text-amber-800 border-amber-200 dark:bg-amber-950/95 dark:text-amber-200 dark:border-amber-800{% elif message.tags == 'info' %}bg-blue-50/95 text-blue-800 border-blue-200 dark:bg-blue-950/95 dark:text-blue-200 dark:border-blue-800{% else %}bg-emerald-50/95 text-emerald-800 border-emerald-200 dark:bg-emerald-950/95 dark:text-emerald-200 dark:border-emerald-800{% endif %}" role="alert">
+                <div class="flex items-center gap-2.5">
+                    <span class="inline-block w-2 h-2 rounded-full {% if message.tags == 'error' %}bg-red-500{% elif message.tags == 'warning' %}bg-amber-500{% elif message.tags == 'info' %}bg-blue-500{% else %}bg-emerald-500{% endif %}"></span>
+                    <span>{{ message }}</span>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="text-neutral-400 hover:text-neutral-700 dark:hover:text-white text-base leading-none ml-3 cursor-pointer">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% block body %}
         {% endblock %}
         </main>

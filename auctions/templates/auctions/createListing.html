@@ -1,40 +1,105 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<section class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col justify-center items-center pt-[12vh] pb-12 px-4">
+<section class="bg-neutral-50 dark:bg-[#0b0f17] min-h-screen py-20 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center transition-colors">
+    <div class="w-full max-w-2xl space-y-6">
 
-    {% if message %}
-    <div
-      class="flex bg-blue-100 rounded-lg p-4 mb-4 text-sm text-blue-700 max-w-xl w-full"
-      role="alert"
-    >
-      <svg
-        class="w-5 h-5 inline mr-3 shrink-0"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-          clip-rule="evenodd"
-        ></path>
-      </svg>
-      <div>
-        <span class="font-medium">{{ message }}</span>
-      </div>
-    </div>
-    {% endif %}
-
-    <h2 class="text-gray-900 dark:text-gray-100 text-3xl sm:text-4xl font-bold mb-6 text-center">Publicar Producto en Venta</h2>
-
-    <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700 shadow-md rounded-2xl p-6 sm:p-8 mb-4 w-full max-w-xl space-y-4">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="mt-6 flex justify-center items-center pt-4">
-            <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-sm" id="submit-button">Publicar Producto</button>
+        <!-- Encabezado de Página -->
+        <div class="text-center space-y-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+                Ventas Directas
+            </span>
+            <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-neutral-950 dark:text-white">
+                Publicar Producto en Venta
+            </h1>
+            <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
+                Complete la información para publicar su artículo en el catálogo de compra y venta.
+            </p>
         </div>
-    </form>
 
+        <!-- Tarjeta del Formulario -->
+        <div class="bg-white dark:bg-[#0f141e] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="p-3.5 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-xl text-xs text-red-700 dark:text-red-300">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Título -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                        Título del Producto <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Categoría y Precio -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                            Categoría <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ form.category.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                            Precio de Venta ($ USD) <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.starting_value }}
+                        {% if form.starting_value.errors %}
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ form.starting_value.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                        Descripción Detallada <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Fotografía -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                        Fotografía o Imagen del Producto (Opcional)
+                    </label>
+                    <div class="p-3 bg-neutral-50 dark:bg-neutral-800/40 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                        {{ form.image }}
+                    </div>
+                    {% if form.image.errors %}
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ form.image.errors.0 }}</p>
+                    {% endif %}
+                    <p class="text-[11px] text-neutral-400 mt-1">Formatos recomendados: JPG, PNG, WEBP.</p>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-3">
+                    <button type="submit" class="w-full sm:flex-1 py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl transition shadow-sm text-center">
+                        Publicar Producto Ahora
+                    </button>
+                    <a href="{% url 'index' %}" class="w-full sm:w-auto py-3 px-6 text-center text-sm font-medium rounded-xl border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </section>
 {% endblock %}

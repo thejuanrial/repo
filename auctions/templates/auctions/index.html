@@ -6,13 +6,7 @@
 
 <section class="bg-white dark:bg-[#0b0f17] text-neutral-900 dark:text-neutral-100 min-h-screen w-full pt-16">
 
-    {% if messages %}
-        {% for message in messages %}
-            <script>
-                alert("{{ message }}");
-            </script>
-        {% endfor %}
-    {% endif %}
+
 
     <!-- 1. BARRA DE ANUNCIO SUPERIOR (MINIMALISTA) -->
     {% if site_config.show_announcement and site_config.announcement_text %}

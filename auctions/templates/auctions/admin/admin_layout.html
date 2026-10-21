@@ -64,11 +64,12 @@
     <!-- TELÓN DE FONDO (BACKDROP) PARA MÓVIL -->
     <div id="admin-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity"></div>
 
-    <!-- SIDEBAR RESPONSIVE (Off-canvas en móvil, fijo en desktop) -->
-    <aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 dark:bg-[#0b0f17] text-white flex flex-col justify-between p-5 border-r border-neutral-800 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto lg:z-auto transition-transform duration-200 ease-in-out shrink-0">
-        <div>
+    <!-- SIDEBAR RESPONSIVE (Off-canvas en móvil, fijo/sticky en desktop) -->
+    <aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 h-screen max-h-screen bg-neutral-900 dark:bg-[#0b0f17] text-white flex flex-col justify-between p-5 border-r border-neutral-800 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:z-30 transition-transform duration-200 ease-in-out shrink-0">
+        <!-- Contenedor superior con scroll autónomo si es necesario -->
+        <div class="flex flex-col min-h-0 flex-1 overflow-hidden">
             <!-- Header Sidebar -->
-            <div class="flex items-center justify-between pb-5 border-b border-neutral-800">
+            <div class="flex items-center justify-between pb-5 border-b border-neutral-800 shrink-0">
                 <a href="{% url 'admin_view' %}" class="flex items-center gap-3">
                     {% if site_config.site_logo %}
                         <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_name }}" class="h-8 object-contain">
@@ -87,8 +88,8 @@
                 </button>
             </div>
 
-            <!-- Navegación del Panel -->
-            <nav class="mt-5 space-y-1 text-xs sm:text-sm font-medium">
+            <!-- Navegación del Panel con scroll propio si la pantalla es corta -->
+            <nav class="mt-4 space-y-1 text-xs sm:text-sm font-medium overflow-y-auto no-scrollbar flex-1 pr-1">
                 <a href="{% url 'admin_view' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-neutral-300 hover:text-white hover:bg-neutral-800 transition">
                     <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     <span>Dashboard</span>
@@ -133,8 +134,8 @@
             </nav>
         </div>
 
-        <!-- Links inferiores -->
-        <div class="pt-4 border-t border-neutral-800 space-y-1 text-xs">
+        <!-- Links inferiores (siempre anclados al fondo) -->
+        <div class="pt-4 border-t border-neutral-800 space-y-1 text-xs shrink-0 mt-auto">
             <a href="{% url 'index' %}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-800 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 <span>Ver Sitio Web</span>
@@ -150,7 +151,7 @@
     <div class="flex-1 flex flex-col min-w-0 bg-neutral-100 dark:bg-[#080b11] transition-colors">
         
         <!-- Header superior en Desktop (>= lg) -->
-        <header class="hidden lg:flex items-center justify-between px-8 py-4 bg-white dark:bg-[#0b0f17] border-b border-neutral-200 dark:border-neutral-800 transition-colors">
+        <header class="hidden lg:flex sticky top-0 z-20 items-center justify-between px-8 py-4 bg-white/95 dark:bg-[#0b0f17]/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 transition-colors">
             <div class="flex items-center gap-2">
                 <span class="text-xs font-mono uppercase text-neutral-400">Sistema /</span>
                 <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Panel de Control</span>

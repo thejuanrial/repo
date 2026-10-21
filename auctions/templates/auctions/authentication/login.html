@@ -2,20 +2,27 @@
 <!-- component -->
 <div class="dark:bg-gray-900 flex justify-center items-center h-screen">
   <!-- Left: Image -->
-  <div
-    class="relative w-1/2 h-screen hidden lg:block flex justify-center items-center"
-  >
-    <p
-      class="absolute inset-0 flex flex-col z-10 text-xl text-center mt-[30vh]"
-    >
-      Una Plataforma de Compra y Venta para <br />
-      <strong>Coleccionistas</strong>
-    </p>
-    <img
-      src="{% static 'auctions/left-bg.png' %}"
-      alt="Imagen de fondo"
-      class="absolute object-fill w-full h-full z-0"
-    />
+  <div class="relative w-1/2 h-screen hidden lg:block overflow-hidden">
+    <div class="absolute inset-0 bg-neutral-950/40 z-10"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-center z-20 text-center px-8 text-white">
+      <p class="text-xl sm:text-2xl font-normal drop-shadow-md">
+        {{ site_config.auth_title|default:'Una Plataforma de Compra y Venta' }} <br />
+        <strong class="font-bold text-2xl sm:text-3xl tracking-tight text-white">{{ site_config.auth_subtitle|default:'para Coleccionistas' }}</strong>
+      </p>
+    </div>
+    {% if site_config.auth_image %}
+      <img
+        src="{{ site_config.auth_image.url }}"
+        alt="{{ site_config.site_name }}"
+        class="absolute object-cover w-full h-full z-0"
+      />
+    {% else %}
+      <img
+        src="{% static 'auctions/left-bg.png' %}"
+        alt="{{ site_config.site_name }}"
+        class="absolute object-cover w-full h-full z-0"
+      />
+    {% endif %}
   </div>
 
   <!-- Right: Login Form -->

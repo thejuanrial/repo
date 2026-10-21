@@ -922,8 +922,17 @@ def admin_site_config(request):
 
         if 'site_logo' in request.FILES:
             config.site_logo = request.FILES['site_logo']
+
+        # Imagen y textos de Login / Registro
+        config.auth_title = request.POST.get('auth_title', config.auth_title).strip()
+        config.auth_subtitle = request.POST.get('auth_subtitle', config.auth_subtitle).strip()
+        if request.POST.get('delete_auth_image') == 'on':
+            config.auth_image = None
+        elif 'auth_image' in request.FILES:
+            config.auth_image = request.FILES['auth_image']
+
         config.save()
-        messages.success(request, 'Configuración general y tasas de divisas actualizadas exitosamente.')
+        messages.success(request, 'Configuración del sitio y personalización de acceso actualizadas exitosamente.')
         return redirect('admin_site_config')
     return render(request, 'auctions/admin/site_config.html', {'config': config})
 

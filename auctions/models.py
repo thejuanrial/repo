@@ -31,6 +31,9 @@ class SiteConfiguration(models.Model):
     copyright_text = models.CharField(max_length=256, default='Todos los derechos reservados')
     contact_email = models.EmailField(blank=True, default='')
     site_logo = models.ImageField(upload_to='site/', blank=True, null=True)
+    auth_image = models.ImageField(upload_to='site/', blank=True, null=True)
+    auth_title = models.CharField(max_length=128, blank=True, default='Una Plataforma de Compra y Venta')
+    auth_subtitle = models.CharField(max_length=128, blank=True, default='para Coleccionistas')
 
     # --- Configuración de Divisas Multi-moneda ---
     # Moneda principal: USD ($)
@@ -166,7 +169,7 @@ class SiteConfiguration(models.Model):
             'feature_2_desc', 'feature_3_title', 'feature_3_desc', 'feature_4_title',
             'feature_4_desc', 'categories_section_title', 'listings_section_title',
             'listings_section_subtitle', 'cta_banner_title', 'cta_banner_text',
-            'cta_banner_button_text',
+            'cta_banner_button_text', 'auth_title', 'auth_subtitle',
         ]
         dirty = False
         for f in text_fields:

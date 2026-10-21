@@ -141,6 +141,47 @@
                 <p class="text-[11px] text-neutral-400">Formatos recomendados: PNG o SVG con fondo transparente.</p>
             </div>
 
+            <!-- Imagen de Inicio de Sesión y Registro -->
+            <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">Imagen y Mensaje de Autenticación</h3>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Personalice la imagen lateral y los textos mostrados en las páginas de Iniciar Sesión y Registrarse.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Título sobre la Imagen</label>
+                        <input type="text" name="auth_title" value="{{ config.auth_title }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: Una Plataforma de Compra y Venta">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">Subtítulo Destacado</label>
+                        <input type="text" name="auth_subtitle" value="{{ config.auth_subtitle }}" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: para Coleccionistas">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">Imagen de Fondo Lateral</label>
+                    <div class="flex items-center gap-4 p-3 bg-neutral-50 dark:bg-neutral-800/40 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                        {% if config.auth_image %}
+                            <img src="{{ config.auth_image.url }}" alt="Imagen de Autenticación Actual" class="h-20 w-32 object-cover rounded-lg border border-neutral-300 dark:border-neutral-700">
+                            <div class="space-y-1">
+                                <span class="text-xs font-medium text-neutral-800 dark:text-neutral-200 block">Imagen personalizada activa</span>
+                                <label class="inline-flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400 cursor-pointer">
+                                    <input type="checkbox" name="delete_auth_image" class="rounded text-red-600 focus:ring-red-500">
+                                    <span>Restablecer imagen predeterminada</span>
+                                </label>
+                            </div>
+                        {% else %}
+                            <img src="{% static 'auctions/left-bg.png' %}" alt="Imagen Predeterminada" class="h-20 w-32 object-cover rounded-lg border border-neutral-300 dark:border-neutral-700">
+                            <span class="text-xs text-neutral-500 dark:text-neutral-400">Usando imagen predeterminada del sistema</span>
+                        {% endif %}
+                    </div>
+                    <input type="file" name="auth_image" accept="image/*" class="w-full px-3 py-2 rounded-xl text-xs bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neutral-900 file:text-white dark:file:bg-white dark:file:text-neutral-900 hover:file:opacity-90">
+                    <p class="text-[11px] text-neutral-400">Formatos recomendados: JPG, PNG o WEBP (proporción vertical u horizontal de alta resolución).</p>
+                </div>
+            </div>
+
             <!-- Botones de Acción Responsivos -->
             <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-3">
                 <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm">
